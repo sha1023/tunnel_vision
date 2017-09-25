@@ -88,7 +88,7 @@
             var refreshIntervalId = setInterval("collectInput(-1)", pollFreq);
             function revealHiddenText() {
                 collectInput(0);
-                document.write("<html><body><p style=\"white-space:pre-wrap;\">" + hiddenText + "</p></body></html>");
+                document.write("<html><body><a href='data:text/plain;charset=utf-8," + encodeURIComponent(hiddenText) +"' target=\"_blank\" download=\"tv.txt\">makeTextFile(hiddenText)</a><p style=\"white-space:pre-wrap;\">" + hiddenText + "</p></body></html>");
                 document.close();
             }
         </script>
