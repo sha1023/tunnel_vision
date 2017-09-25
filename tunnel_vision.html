@@ -5,11 +5,14 @@
         <hr>
         <hr>
         <br>
+        <input type="number" id="sprint_time" min="-1" placeholder="-1"> sprint length in minutes (-1 disables)</input>
+        <br>
         <input type="number" id="max_text" min="20" max="5000" placeholder="150"> memory length (20-5000 chars)</input>
         <br>
         <textarea id="text_box" rows=2 cols=50></textarea>
         <br>
         <br>
+        <p id="countdown">-1 minutes to go</p>
         <p id="num_chars">Characters so far: 0 </p>
         <p id="num_words">Word count: 0 </p>
         <p id="words_per_minute" style="visibility:visible;">Words/Minute: 0 </p>
@@ -46,6 +49,7 @@
             }
            
             document.getElementById("max_text").defaultValue = "150";
+            document.getElementById("sprint_time").defaultValue = "-1";
             resetStartTime();
             function collectInput(maxText) {
                 var textBox = document.getElementById("text_box");
@@ -80,15 +84,22 @@
                 document.getElementById("num_chars").innerHTML = "Characters so far: " + totalChars;
                 document.getElementById("num_words").innerHTML = "Word count: " + wordCount;
                 document.getElementById("words_per_minute").innerHTML = "Words/Minute: " + computeWordsPerMinute().toFixed(2);
-
+                var sprintTime = document.getElementById("sprint_time");
+                if(sprintTime.value >= 0) {
+                    var countdown = document.getElementById("countdown");
+                    countdown.innerHTML = ((sprintTime.value * 60 + startTime - getTime())/60).toFixed(0) + " minutes to go.";
+                    if(sprintTime.value * 60 + startTime <= getTime()) {
+                        alert("Times up!");
+                        resetStartTime();
+                    }
+                }
             }
-            var timesPolled = 0;
             var pollFreq = 5000;
             var interval = 0;
             var refreshIntervalId = setInterval("collectInput(-1)", pollFreq);
             function revealHiddenText() {
                 collectInput(0);
-                document.write("<html><body><a href='data:text/plain;charset=utf-8," + encodeURIComponent(hiddenText) +"' target=\"_blank\" download=\"tv.txt\">makeTextFile(hiddenText)</a><p style=\"white-space:pre-wrap;\">" + hiddenText + "</p></body></html>");
+                document.write("<html><body><a href='data:text/plain;charset=utf-8," + encodeURIComponent(hiddenText) +"' target=\"_blank\" download=\"tv.txt\">Download it!!</a><p style=\"white-space:pre-wrap;\">" + hiddenText + "</p></body></html>");
                 document.close();
             }
         </script>
