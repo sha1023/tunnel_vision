@@ -5,10 +5,20 @@
         <hr>
         <hr>
         <br>
-        <textarea id="text_box" rows=3 cols=50></textarea>
+        <input type="number" id="max_text" min="20" max="5000" placeholder="150"> memory length (20-5000 chars)</input>
+        <br>
+        <textarea id="text_box" rows=2 cols=50></textarea>
         <script>
             var hiddenText = "";
+            document.getElementById("max_text").defaultValue = "150";
             function collectInput(maxText) {
+                if(maxText < 0) {
+                    var maxTextInput = document.getElementById("max_text");
+                    if(maxTextInput.value < maxTextInput.min || maxTextInput.value > maxTextInput.max) {
+                        maxTextInput.value = maxTextInput.defaultValue;
+                    }
+                    maxText = maxTextInput.value;
+                }
                 var textBox = document.getElementById("text_box");
                 var excessText = textBox.value.length - maxText;
                 var keepText = "";
@@ -20,9 +30,13 @@
                     textBox.value = keepText;
                 }
             }
+            function resizeWindow() {
+                var maxText = document.getElementById("max_text").value;
+                document.getElementById("num_words").innerHTML = "memory_length: " + maxText;
+            }
             var pollFreq = 5000;
             var interval = 0;
-            var refreshIntervalId = setInterval("collectInput(300)", pollFreq);
+            var refreshIntervalId = setInterval("collectInput(-1)", pollFreq);
             function revealHiddenText() {
                 collectInput(0);
                 document.write("<html><body><p style=\"white-space:pre-wrap;\">" + hiddenText + "</p></body></html>");
