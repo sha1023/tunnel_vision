@@ -8,10 +8,48 @@
         <input type="number" id="max_text" min="20" max="5000" placeholder="150"> memory length (20-5000 chars)</input>
         <br>
         <textarea id="text_box" rows=2 cols=50></textarea>
+        <br>
+        <br>
+        <p id="num_chars">Characters so far: 0 </p>
+        <p id="num_words">Word count: 0 </p>
+        <p id="words_per_minute" style="visibility:visible;">Words/Minute: 0 </p>
+        <br>
+        <button onclick="toggleWordsPerMinute()">Toggle Words/Minute</button>
+        <button onclick="resetStartTime()" id="start_time">Start Time: </button>
+        <br>
+        <hr>
+        <button onclick="revealHiddenText()">What did I write?</button>
+
         <script>
             var hiddenText = "";
+            var hiddenWordCount = 0;
+            var wordCount = 0;
+            var wordPerMinuteOffset = 0;
+            function getTime() {
+                return new Date().getTime() / 1000;
+            }
+            function resetStartTime() {
+                startTime = getTime();
+                wordPerMinuteOffset = wordCount;
+                document.getElementById("start_time").innerHTML = "Start Time: " + (new Date(startTime * 1000)).toLocaleTimeString();
+            }
+            function computeWordsPerMinute() {
+                return (wordCount-wordPerMinuteOffset)*60.0/( getTime() - startTime)
+            }
+            function toggleWordsPerMinute(){
+                if (document.getElementById("words_per_minute").style.visibility != "visible") {
+                   document.getElementById("words_per_minute").style.visibility = "visible" 
+                } else {
+                   document.getElementById("words_per_minute").style.visibility = "hidden" 
+                }
+
+            }
+           
             document.getElementById("max_text").defaultValue = "150";
+            resetStartTime();
             function collectInput(maxText) {
+                var textBox = document.getElementById("text_box");
+                var excessText = textBox.value.length; // Edge case that there are no spaces
                 if(maxText < 0) {
                     var maxTextInput = document.getElementById("max_text");
                     if(maxTextInput.value < maxTextInput.min || maxTextInput.value > maxTextInput.max) {
@@ -19,17 +57,32 @@
                     }
                     maxText = maxTextInput.value;
                 }
-                var textBox = document.getElementById("text_box");
-                var excessText = textBox.value.length - maxText;
-                var keepText = "";
+                if(maxText != 0) {
+                    var excessTextSpace = textBox.value.lastIndexOf(" ", textBox.value.length - maxText);
+                    var excessTextNewline = textBox.value.lastIndexOf("\n", textBox.value.length - maxText);
+                    excessText = excessTextSpace;
+                    if( excessText < excessTextNewline) {
+                        excessText = excessTextNewline;
+                    }
+                }
+                var keepText = textBox.value;
                 var totalChars = hiddenText.length + textBox.value.length;
-                document.getElementById("num_chars").innerHTML = "Characters so far: " + totalChars;
                 if(excessText > 0) {
-                    hiddenText += textBox.value.substring(0, excessText);
-                    keepText += textBox.value.substring(excessText, textBox.value.length+10);
+                    var newText = textBox.value.substring(0, excessText);
+                    var newWords = newText.split(/[ \n]+/);
+                    newWords = newWords.filter(function(entry) { return entry != ""; });
+                    hiddenWordCount += newWords.length 
+                    hiddenText += newText;
+                    keepText = textBox.value.substring(excessText, textBox.value.length+10);
                     textBox.value = keepText;
                 }
+                wordCount = hiddenWordCount + keepText.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
+                document.getElementById("num_chars").innerHTML = "Characters so far: " + totalChars;
+                document.getElementById("num_words").innerHTML = "Word count: " + wordCount;
+                document.getElementById("words_per_minute").innerHTML = "Words/Minute: " + computeWordsPerMinute();
+
             }
+            var timesPolled = 0;
             var pollFreq = 5000;
             var interval = 0;
             var refreshIntervalId = setInterval("collectInput(-1)", pollFreq);
@@ -39,9 +92,5 @@
                 document.close();
             }
         </script>
-        <br>
-        <br>
-        <p id="num_chars">Characters so far: 0 </p>
-        <button onclick="revealHiddenText()">What did I write?</button>
     </body>
 </html>
