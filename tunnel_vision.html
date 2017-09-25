@@ -79,7 +79,7 @@
                 wordCount = hiddenWordCount + keepText.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
                 document.getElementById("num_chars").innerHTML = "Characters so far: " + totalChars;
                 document.getElementById("num_words").innerHTML = "Word count: " + wordCount;
-                document.getElementById("words_per_minute").innerHTML = "Words/Minute: " + computeWordsPerMinute();
+                document.getElementById("words_per_minute").innerHTML = "Words/Minute: " + computeWordsPerMinute().toFixed(2);
 
             }
             var timesPolled = 0;
