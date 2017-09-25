@@ -1,0 +1,34 @@
+<html>
+    <body>
+        <hr>
+        <p><i>I do not like work even when someone else does it.</i> -- MT</p>
+        <hr>
+        <hr>
+        <br>
+        <textarea id="text_box" rows=3 cols=50></textarea>
+        <script>
+            var hiddenText = "";
+            function collectInput(maxText) {
+                var textBox = document.getElementById("text_box");
+                var excessText = textBox.value.length - maxText;
+                var keepText = "";
+                if(excessText > 0) {
+                    hiddenText += textBox.value.substring(0, excessText);
+                    keepText += textBox.value.substring(excessText, textBox.value.length+10);
+                    textBox.value = keepText;
+                }
+            }
+            var pollFreq = 5000;
+            var interval = 0;
+            var refreshIntervalId = setInterval("collectInput(300)", pollFreq);
+            function revealHiddenText() {
+                collectInput(0);
+                document.write("<html><body><p style=\"white-space:pre-wrap;\">" + hiddenText + "</p></body></html>");
+                document.close();
+            }
+        </script>
+        <br>
+        <br>
+        <button onclick="revealHiddenText()">What did I write?</button>
+    </body>
+</html>
