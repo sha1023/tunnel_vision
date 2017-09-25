@@ -23,16 +23,12 @@
                 var excessText = textBox.value.length - maxText;
                 var keepText = "";
                 var totalChars = hiddenText.length + textBox.value.length;
-                document.getElementById("num_words").innerHTML = "Characters so far: " + totalChars;
+                document.getElementById("num_chars").innerHTML = "Characters so far: " + totalChars;
                 if(excessText > 0) {
                     hiddenText += textBox.value.substring(0, excessText);
                     keepText += textBox.value.substring(excessText, textBox.value.length+10);
                     textBox.value = keepText;
                 }
-            }
-            function resizeWindow() {
-                var maxText = document.getElementById("max_text").value;
-                document.getElementById("num_words").innerHTML = "memory_length: " + maxText;
             }
             var pollFreq = 5000;
             var interval = 0;
@@ -45,7 +41,7 @@
         </script>
         <br>
         <br>
-        <p id="num_words">Characters so far: 0 </p>
+        <p id="num_chars">Characters so far: 0 </p>
         <button onclick="revealHiddenText()">What did I write?</button>
     </body>
 </html>
