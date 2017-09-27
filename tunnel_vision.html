@@ -7,14 +7,14 @@
         <br>
         <div id="leftSandbox" style="float:left;border-size:1px;"></div>
         <div id="rightSandbox" style="float:right;border-size:1px;"></div>
-        <div style="position: absolute; bottom: 5px;">
-        <hr>
-        <hr>
-        <br>
-        <button onclick="resetStartTime()" id="start_time">Start Time: </button>
-        <br>
-        <hr>
-        <button onclick="revealHiddenText()">What did I write?</button>
+        <div style="clear:both; bottom: 5px;">
+            <hr>
+            <hr>
+            <br>
+            <button onclick="resetStartTime()" id="start_time">Start Time: </button>
+            <br>
+            <hr>
+            <button onclick="revealHiddenText()">What did I write?</button>
         </div>
         <script>
             function getParameterByName(name, url) {
@@ -31,6 +31,7 @@
                 if (element == null) {
                     element = document.createElement("DIV");
                     element.id = key;
+                    //element.style.border = "thin solid black"; 
                     if(key[0] == "R") {
                         document.getElementById("rightSandbox").appendChild(element);
                     } else  {
