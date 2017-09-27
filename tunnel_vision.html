@@ -5,25 +5,158 @@
         <hr>
         <hr>
         <br>
-        <input type="number" id="sprint_time" min="-1" placeholder="-1"> sprint length in minutes (-1 disables)</input>
+        <div id="leftSandbox" style="float:left;border-size:1px;"></div>
+        <div id="rightSandbox" style="float:right;border-size:1px;"></div>
+        <div style="position: absolute; bottom: 5px;">
+        <hr>
+        <hr>
         <br>
-        <input type="number" id="max_text" min="20" max="5000" placeholder="150"> memory length (20-5000 chars)</input>
-        <br>
-        <textarea id="text_box" rows=2 cols=50></textarea>
-        <br>
-        <br>
-        <p id="countdown">-1 minutes to go</p>
-        <p id="num_chars">Characters so far: 0 </p>
-        <p id="num_words">Word count: 0 </p>
-        <p id="words_per_minute" style="visibility:visible;">Words/Minute: 0 </p>
-        <br>
-        <button onclick="toggleWordsPerMinute()">Toggle Words/Minute</button>
         <button onclick="resetStartTime()" id="start_time">Start Time: </button>
         <br>
         <hr>
         <button onclick="revealHiddenText()">What did I write?</button>
-
+        </div>
         <script>
+            function getParameterByName(name, url) {
+                if (!url) url = window.location.href;
+                name = name.replace(/[\[\]]/g, "\\$&");
+                var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, " "));
+            }
+            function processDivLoc(key, value) {
+                var element = document.getElementById(key)
+                if (element == null) {
+                    element = document.createElement("DIV");
+                    element.id = key;
+                    if(key[0] == "R") {
+                        document.getElementById("rightSandbox").appendChild(element);
+                    } else  {
+                        document.getElementById("leftSandbox").appendChild(element);
+                    }
+                }
+                if( value == null ) {
+                    element.style.visibility = "hidden";
+                    return;
+                }
+                element.style.visibility = "visible";
+                switch(value) {
+                    case "notes":
+                        var notes = document.getElementById("notes");
+                        if(notes == null) {
+                            var notes = document.createElement("TEXTAREA");
+                            notes.id = "notes";
+                            notes.rows = "2";
+                            notes.cols = "50";
+                            notes.style.visibility = "visible";
+                            var heading = document.createElement("p");
+                            heading.innerHTML = "Notes:";
+                            element.appendChild(heading);
+                            element.appendChild(notes);
+                        }
+                        break;
+                    case "tunnel":
+                        var tunnel = document.getElementById("text_box");
+                        if(tunnel == null) {
+                            var maxText = document.createElement("input");
+                            maxTextstype = "number";
+                            maxText.id = "max_text";
+                            maxText.min = "20";
+                            maxText.max = "5000"
+                            maxText.placeholder = "150";
+                            maxText.defaultValue = "150";
+                            var maxTextParent = document.createElement("p");
+                            maxTextParent.innerHTML = "memory length (20-5000 chars) ";
+                            maxTextParent.appendChild(maxText);
+
+                            var tunnel = document.createElement("TEXTAREA");
+                            tunnel.id = "text_box";
+                            tunnel.rows = "2";
+                            tunnel.cols = "50";
+                            tunnel.style.visibility = "visible";
+                            element.appendChild(maxTextParent);
+                            element.appendChild(document.createElement("br"));
+                            element.appendChild(tunnel);
+                        }
+                        break;
+                    case "stats":
+                        var num_chars = document.getElementById("num_chars");
+                        if(num_chars == null) {
+                            var numChars = document.createElement("p");
+                            numChars.id = "num_chars";
+                            numChars.innerHTML = "Characters so far: 0";
+                            var numWords = document.createElement("p");
+                            numWords.id = "num_words";
+                            numWords.innerHTML = "Word count: 0";
+                            element.appendChild(numChars);
+                            element.appendChild(numWords);
+                        }
+                        break;
+                    case "sprint":
+                        var sprint = document.getElementById("sprint_time");
+                        if(sprint == null){
+                            var sprint = document.createElement("input");
+                            sprint.type= "number";
+                            sprint.id = "sprint_time";
+                            sprint.min = "-1";
+                            sprint.placeholder = "-1";
+                            sprint.defaultValue = "-1";
+                            var sprintParent = document.createElement("p");
+                            sprintParent.innerHTML = "sprint length in minutes (-1 disables) ";
+                            sprintParent.appendChild(sprint);
+
+                            var countdown = document.createElement("p");
+                            countdown.id = "countdown";
+                            countdown.innerHTML = "-1 minutes to go";
+                            element.appendChild(sprintParent);
+                            element.appendChild(countdown);
+                        }
+                        break;
+                    case "wpm":
+                        var wpmButton = document.getElementById("wpm_button");
+                        if(wpmButton == null){
+                            var wpmButton = document.createElement("BUTTON");
+                            wpmButton.id = "wpm_button";
+                            wpmButton.onclick = toggleWordsPerMinute;
+                            wpmButton.innerHTML = "Toggle Words/Minute";
+
+                            var wpm = document.createElement("p");
+                            wpm.id = "words_per_minute";
+                            wpm.innerHTML = "Words/Minute: 0";
+                            wpm.style.visibility = "visible";
+
+                            element.appendChild(wpmButton);
+                            element.appendChild(wpm);
+                        }
+                        break;
+                }
+
+            }
+            function getParameterByName(name, url) {
+                if (!url) url = window.location.href;
+                name = name.replace(/[\[\]]/g, "\\$&");
+                var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, " "));
+            }
+            //var divTypes = ["timer", "notes", "window", "sprint", "wpm", "stats"];
+            //L1=tunnel&L2=stats&R1=notes&L3=wpm&R2=sprint
+            var url = window.location.href;
+            if(!document.location.search.length) {
+                //default to :
+                url += "?L1=tunnel&L2=stats&R1=notes&L3=wpm&R2=sprint";
+            }
+            var divLocs = ["L1", "L2", "L3", "L4", "L5", "L6", "R1", "R2", "R3", "R4", "R5", "R6"];
+            for(var i = 0; i < divLocs.length; i++) {
+                var key = divLocs[i];
+                var value = getParameterByName(key, url);
+                processDivLoc(key, value);
+            }
+
             var hiddenText = "";
             var hiddenWordCount = 0;
             var wordCount = 0;
@@ -37,19 +170,17 @@
                 document.getElementById("start_time").innerHTML = "Start Time: " + (new Date(startTime * 1000)).toLocaleTimeString();
             }
             function computeWordsPerMinute() {
-                return (wordCount-wordPerMinuteOffset)*60.0/( getTime() - startTime)
+                return (wordCount-wordPerMinuteOffset)*60.0/( getTime() - startTime);
             }
             function toggleWordsPerMinute(){
                 if (document.getElementById("words_per_minute").style.visibility != "visible") {
-                   document.getElementById("words_per_minute").style.visibility = "visible" 
+                   document.getElementById("words_per_minute").style.visibility = "visible" ;
                 } else {
-                   document.getElementById("words_per_minute").style.visibility = "hidden" 
+                   document.getElementById("words_per_minute").style.visibility = "hidden" ;
                 }
 
             }
-           
-            document.getElementById("max_text").defaultValue = "150";
-            document.getElementById("sprint_time").defaultValue = "-1";
+
             resetStartTime();
             function collectInput(maxText) {
                 var textBox = document.getElementById("text_box");
@@ -81,11 +212,17 @@
                     textBox.value = keepText;
                 }
                 wordCount = hiddenWordCount + keepText.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
-                document.getElementById("num_chars").innerHTML = "Characters so far: " + totalChars;
-                document.getElementById("num_words").innerHTML = "Word count: " + wordCount;
-                document.getElementById("words_per_minute").innerHTML = "Words/Minute: " + computeWordsPerMinute().toFixed(2);
+                var numChars = document.getElementById("num_chars")
+                if(numChars != null) {
+                    numChars.innerHTML = "Characters so far: " + totalChars;
+                    document.getElementById("num_words").innerHTML = "Word count: " + wordCount;
+                }
+                var wpm = document.getElementById("words_per_minute")
+                if(wpm != null) {
+                    wpm.innerHTML = "Words/Minute: " + computeWordsPerMinute().toFixed(2);
+                }
                 var sprintTime = document.getElementById("sprint_time");
-                if(sprintTime.value >= 0) {
+                if(sprintTime != null && sprintTime.value >= 0) {
                     var countdown = document.getElementById("countdown");
                     countdown.innerHTML = ((sprintTime.value * 60 + startTime - getTime())/60).toFixed(0) + " minutes to go.";
                     if(sprintTime.value * 60 + startTime <= getTime()) {
@@ -103,5 +240,6 @@
                 document.close();
             }
         </script>
+
     </body>
 </html>
