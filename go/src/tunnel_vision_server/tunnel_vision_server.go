@@ -5,6 +5,7 @@ import (
     "github.com/gorilla/mux"
     "io/ioutil"
     "net/http"
+    "os"
 )
 
 //TODO make this safer and more reliable:
@@ -40,12 +41,18 @@ func endpoints(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+    if len(os.Args) != 2 {
+        fmt.Println("Please specify path to index.html")
+        os.Exit(1)
+    }
+    htmlPath := os.Args[1]
     r := mux.NewRouter()
     r.HandleFunc("/api/get/{name}", get)
     r.HandleFunc("/api/save/{name}", save).Methods("POST")
     r.HandleFunc("/", endpoints)
-    r.PathPrefix("/tv/").Handler(http.StripPrefix("/tv/", http.FileServer(http.Dir("/Users/stephan/Desktop/tunnel_vision"))))
+    r.PathPrefix("/tv/").Handler(http.StripPrefix("/tv/", http.FileServer(http.Dir(htmlPath))))
     http.Handle("/tv/", r)
+    http.Handle("/", r)
 
     port := "1920"
     fmt.Print("Starting Server on port: " + port + "\n")
