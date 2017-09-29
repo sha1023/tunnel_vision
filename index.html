@@ -2,6 +2,7 @@
     <body>
         <hr>
         <p><i>I do not like work even when someone else does it.</i> -- MT</p>
+        <p>Project Name:  <input type:"text" id="project_name"></input> <button onclick="saveState()">Save!</button><button onclick="loadSavedState()">Load...</button></p>
         <hr>
         <hr>
         <br>
@@ -17,6 +18,53 @@
             <button onclick="revealHiddenText()">What did I write?</button>
         </div>
         <script>
+            function getApi(name) {
+                if(name == null || name.length == 0) {
+                    alert("Can't get unnamed project.");
+                    return;
+                }
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "http://localhost:1920/api/get/" + name, false);
+                xhr.send();
+                return xhr.responseText;
+            }
+            function saveApi(name, jsonToBeSaved) {
+                if(name == null || name.length == 0) {
+                    alert("Can't save unless you name your project.");
+                    return;
+                }
+                if(jsonToBeSaved == null || jsonToBeSaved.length == 0) {
+                    alert("No data to save.");
+                    return;
+                }
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/api/save/" + name, false);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify(jsonToBeSaved));
+            }
+            function saveState(name) {
+                if(name == null) {
+                    name = document.getElementById("project_name").value;
+                }
+                saveApi(name, {"text_box":hiddenText + document.getElementById("text_box").value, "notes":document.getElementById("notes").value});
+            }
+            function loadSavedState(name) {
+                if(name == null) {
+                    name = document.getElementById("project_name").value;
+                }
+                if(name.length == 0) {
+                    alert("Can't load unnamed project.");
+                    return;
+                }
+                var state = JSON.parse(getApi(name));
+                hiddenText = "";
+                if(state["text_box"] != null) {
+                    document.getElementById("text_box").value = state["text_box"];
+                }
+                if(state["notes"] != null) {
+                    document.getElementById("notes").value = state["notes"];
+                }
+            }
             function getParameterByName(name, url) {
                 if (!url) url = window.location.href;
                 name = name.replace(/[\[\]]/g, "\\$&");
@@ -31,7 +79,6 @@
                 if (element == null) {
                     element = document.createElement("DIV");
                     element.id = key;
-                    //element.style.border = "thin solid black"; 
                     if(key[0] == "R") {
                         document.getElementById("rightSandbox").appendChild(element);
                     } else  {
@@ -128,40 +175,33 @@
                             wpm.innerHTML = "Words/Minute: 0";
                             wpm.style.visibility = "visible";
 
+                            //var activate = document.createElement("input");
+                            //activate.type = "checkbox";
+                            //activate.innerHTML = "activate";
+
                             element.appendChild(wpmButton);
                             element.appendChild(wpm);
+                            //element.appendChild(activate);
                         }
                         break;
                 }
 
             }
-            function getParameterByName(name, url) {
-                if (!url) url = window.location.href;
-                name = name.replace(/[\[\]]/g, "\\$&");
-                var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-                if (!results) return null;
-                if (!results[2]) return '';
-                return decodeURIComponent(results[2].replace(/\+/g, " "));
+            function setupDivsFromURL() {
+                //var divTypes = ["timer", "notes", "window", "sprint", "wpm", "stats"];
+                //L1=tunnel&L2=stats&R1=notes&L3=wpm&R2=sprint
+                var url = window.location.href;
+                if(!document.location.search.length) {
+                    //default to :
+                    url += "?L1=tunnel&L2=stats&R1=notes&L3=wpm&R2=sprint";
+                }
+                var divLocs = ["L1", "L2", "L3", "L4", "L5", "L6", "R1", "R2", "R3", "R4", "R5", "R6"];
+                for(var i = 0; i < divLocs.length; i++) {
+                    var key = divLocs[i];
+                    var value = getParameterByName(key, url);
+                    processDivLoc(key, value);
+                }
             }
-            //var divTypes = ["timer", "notes", "window", "sprint", "wpm", "stats"];
-            //L1=tunnel&L2=stats&R1=notes&L3=wpm&R2=sprint
-            var url = window.location.href;
-            if(!document.location.search.length) {
-                //default to :
-                url += "?L1=tunnel&L2=stats&R1=notes&L3=wpm&R2=sprint";
-            }
-            var divLocs = ["L1", "L2", "L3", "L4", "L5", "L6", "R1", "R2", "R3", "R4", "R5", "R6"];
-            for(var i = 0; i < divLocs.length; i++) {
-                var key = divLocs[i];
-                var value = getParameterByName(key, url);
-                processDivLoc(key, value);
-            }
-
-            var hiddenText = "";
-            var hiddenWordCount = 0;
-            var wordCount = 0;
-            var wordPerMinuteOffset = 0;
             function getTime() {
                 return new Date().getTime() / 1000;
             }
@@ -179,14 +219,11 @@
                 } else {
                    document.getElementById("words_per_minute").style.visibility = "hidden" ;
                 }
-
             }
-
-            resetStartTime();
             function collectInput(maxText) {
                 var textBox = document.getElementById("text_box");
                 var excessText = textBox.value.length; // Edge case that there are no spaces
-                if(maxText < 0) {
+                if(maxText == null) {
                     var maxTextInput = document.getElementById("max_text");
                     if(maxTextInput.value < maxTextInput.min || maxTextInput.value > maxTextInput.max) {
                         maxTextInput.value = maxTextInput.defaultValue;
@@ -232,13 +269,29 @@
                     }
                 }
             }
-            var pollFreq = 5000;
-            var interval = 0;
-            var refreshIntervalId = setInterval("collectInput(-1)", pollFreq);
             function revealHiddenText() {
                 collectInput(0);
                 document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(hiddenText) +"' target=\"_blank\" download=\"tv.txt\">Download it!!</a><p style=\"white-space:pre-wrap;\">" + hiddenText + "</p></body></html>");
                 document.close();
+            }
+
+            var hiddenText = "";
+            var hiddenWordCount = 0;
+            var wordCount = 0;
+            var wordPerMinuteOffset = 0;
+
+            setupDivsFromURL();
+            resetStartTime();
+            var pollFreq = 5000;
+            var interval = 0;
+            var refreshIntervalId = setInterval("collectInput()", pollFreq);
+            document.onkeypress = function(evt) {
+                evt = evt || window.event;
+                var charCode = evt.keyCode || evt.which;
+                var charStr = String.fromCharCode(charCode);
+                if(evt.ctrlKey && charStr == "s") {
+                    saveState();
+                }
             }
         </script>
 
