@@ -2,9 +2,10 @@
     <body>
         <hr>
         <p><i>I do not like work even when someone else does it.</i> -- MT</p>
-        <p>Project Name:  <input type:"text" id="project_name"></input> <button onclick="saveState()">Save!</button><button onclick="loadSavedState()">Load...</button></p>
         <hr>
         <hr>
+        <p><b>Temporary</b> Save to Browser (Download to get a file copy): <button onclick="saveState()">Save?</button></p>
+        <p>Load last saved State: <button onclick="loadSavedState()">Load...</button></p>
         <br>
         <div id="leftSandbox" style="float:left;border-size:1px;"></div>
         <div id="rightSandbox" style="float:right;border-size:1px;"></div>
@@ -18,17 +19,31 @@
             <button onclick="revealHiddenText()">What did I write?</button>
         </div>
         <script>
-            function getApi(name) {
+            function getProjectName() {
+                //<p>Project Name:  <input type:"text" id="project_name"></input> <button onclick="saveState()">Save!</button><button onclick="loadSavedState()">Load...</button></p>
+                //not allowing users to pick names, to avoid clutter saved in the browser history.
+                //if it were allowed:
+                //return document.getElementById("project_name").value;
+                return "tunnel_vision";
+            }
+            function getApi(name, keys) {
+                var localStorage = window.localStorage;
+                var keyDelim = "-";
+                var jsonToReturn = {};
                 if(name == null || name.length == 0) {
                     alert("Can't get unnamed project.");
                     return;
                 }
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", "http://localhost:1920/api/get/" + name, false);
-                xhr.send();
-                return xhr.responseText;
+                var keysLength = keys.length;
+                for(var i=0; i < keysLength; i++) {
+                    var key = keys[i];
+                    jsonToReturn[key] = localStorage.getItem(name + keyDelim + key);
+                }
+                return jsonToReturn;
             }
             function saveApi(name, jsonToBeSaved) {
+                var localStorage = window.localStorage;
+                var keyDelim = "-";
                 if(name == null || name.length == 0) {
                     alert("Can't save unless you name your project.");
                     return;
@@ -37,26 +52,31 @@
                     alert("No data to save.");
                     return;
                 }
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", "/api/save/" + name, false);
-                xhr.setRequestHeader("Content-Type", "application/json");
-                xhr.send(JSON.stringify(jsonToBeSaved));
+                for (var key in jsonToBeSaved) {
+                    localStorage.setItem(name + keyDelim + key, jsonToBeSaved[key]);
+                }
             }
             function saveState(name) {
                 if(name == null) {
-                    name = document.getElementById("project_name").value;
+                    name = getProjectName();
                 }
-                saveApi(name, {"text_box":hiddenText + document.getElementById("text_box").value, "notes":document.getElementById("notes").value});
+                var texts = hiddenText + document.getElementById("text_box").value;
+                var notes = document.getElementById("notes").value;
+                if(texts == null || texts.length == 0) {
+                    alert("No data to save.");
+                    return;
+                }
+                saveApi(name, {"text_box":texts, "notes":notes});
             }
             function loadSavedState(name) {
                 if(name == null) {
-                    name = document.getElementById("project_name").value;
+                    name = getProjectName();
                 }
                 if(name.length == 0) {
                     alert("Can't load unnamed project.");
                     return;
                 }
-                var state = JSON.parse(getApi(name));
+                var state = getApi(name, ["text_box", "notes"]);
                 hiddenText = "";
                 if(state["text_box"] != null) {
                     document.getElementById("text_box").value = state["text_box"];
