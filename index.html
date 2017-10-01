@@ -13,6 +13,7 @@
             <button onclick="resetStartTime()" id="start_time">Start Time: </button>
             <br>
             <hr>
+            <p id="save_stats">Not Saved.</p>
             <p><button onclick="saveState()">Save?</button> (to browser)</p>
             <p><input type="checkbox" id="auto_save"></input> 5 minute auto-save?</p>
             <p><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
@@ -68,6 +69,7 @@
                 }
                 saveApi(name, {"text_box":texts, "notes":notes});
                 globalState.vars["lastSaveTime"] = getTime();
+                document.getElementById("save_stats").innerHTML = "Saved " + globalState.vars["wordCount"] + " words @ " + (new Date(globalState.vars["lastSaveTime"] * 1000)).toLocaleTimeString() + ".";
             }
             function loadSavedState(name) {
                 if(name == null) {
