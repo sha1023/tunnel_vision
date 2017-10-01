@@ -142,11 +142,13 @@
                             var maxTextParent = document.createElement("p");
                             maxTextParent.innerHTML = "text display limit (20-5000 chars) ";
                             maxTextParent.appendChild(maxText);
-                            btn = document.createElement("BUTTON");
-                            var t = document.createTextNode("CLICK ME"); 
-                            //btn.appendChild(t); 
-                            //btn.onclick = toggleMaxTextActive;
-                            //element.appendChild(btn);
+                            var noDisplayLimit = document.createElement("input");
+                            noDisplayLimit.type = "checkbox";
+                            noDisplayLimit.id = "noDisplayLimit";
+                            noDisplayLimit.check = false;
+                            var noDisplayLimitParent = document.createElement("p");
+                            noDisplayLimitParent.innerHTML = "no display limit?";
+                            noDisplayLimitParent.appendChild(noDisplayLimit);
 
                             var tunnel = document.createElement("TEXTAREA");
                             tunnel.id = "text_box";
@@ -154,6 +156,7 @@
                             tunnel.cols = "50";
                             tunnel.style.visibility = "visible";
                             element.appendChild(maxTextParent);
+                            element.appendChild(noDisplayLimitParent);
                             element.appendChild(document.createElement("br"));
                             element.appendChild(tunnel);
                         }
@@ -293,7 +296,7 @@
                 }
                 var keepText = textBox.value;
                 var totalChars = globalState.vars["hiddenText"].length + textBox.value.length;
-                if(excessText > 0) {
+                if(maxText == 0 || (excessText > 0 && !document.getElementById("noDisplayLimit").checked)) {
                     var newText = textBox.value.substring(0, excessText);
                     var newWords = newText.split(/[ \n]+/);
                     newWords = newWords.filter(function(entry) { return entry != ""; });
