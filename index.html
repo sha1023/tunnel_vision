@@ -67,7 +67,7 @@
                     return;
                 }
                 saveApi(name, {"text_box":texts, "notes":notes});
-                globalState["lastSaveTime"] = getTime();
+                globalState.vars["lastSaveTime"] = getTime();
             }
             function loadSavedState(name) {
                 if(name == null) {
@@ -194,8 +194,8 @@
                                 var sprintTime = document.getElementById("sprint_time");
                                 if(sprintTime.value >= 0) {
                                     var countdown = document.getElementById("countdown");
-                                    countdown.innerHTML = ((sprintTime.value * 60 + globalState["startTime"] - getTime())/60).toFixed(0) + " minutes to go.";
-                                    if(sprintTime.value * 60 + globalState["startTime"] <= getTime()) {
+                                    countdown.innerHTML = ((sprintTime.value * 60 + globalState.vars["startTime"] - getTime())/60).toFixed(0) + " minutes to go.";
+                                    if(sprintTime.value * 60 + globalState.vars["startTime"] <= getTime()) {
                                         alert("Times up!");
                                         resetStartTime();
                                     }
@@ -253,12 +253,12 @@
                 return new Date().getTime() / 1000;
             }
             function resetStartTime() {
-                globalState["startTime"] = getTime();
+                globalState.vars["startTime"] = getTime();
                 globalState.vars["wordPerMinuteOffset"] = globalState.vars["wordCount"];
-                document.getElementById("start_time").innerHTML = "Start Time: " + (new Date(globalState["startTime"] * 1000)).toLocaleTimeString();
+                document.getElementById("start_time").innerHTML = "Start Time: " + (new Date(globalState.vars["startTime"] * 1000)).toLocaleTimeString();
             }
             function computeWordsPerMinute() {
-                return (globalState.vars["wordCount"]-globalState.vars["wordPerMinuteOffset"])*60.0/( getTime() - globalState["startTime"]);
+                return (globalState.vars["wordCount"]-globalState.vars["wordPerMinuteOffset"])*60.0/( getTime() - globalState.vars["startTime"]);
             }
             function toggleWordsPerMinute(){
                 if (document.getElementById("words_per_minute").style.visibility != "visible") {
@@ -306,7 +306,7 @@
                     numChars.innerHTML = "Characters so far: " + totalChars;
                     document.getElementById("num_words").innerHTML = "Word count: " + globalState.vars["wordCount"];
                 }
-                if (document.getElementById("auto_save").checked && (getTime() - globalState["lastSaveTime"] > 5*60)) {
+                if (document.getElementById("auto_save").checked && (getTime() - globalState.vars["lastSaveTime"] > 5*2)) {
                     saveState();
                 }
                 for (key in widgetState) {
@@ -333,7 +333,7 @@
 
             var widgetState = setupDivsFromURL();
             resetStartTime();
-            globalState["lastSaveTime"] = globalState["startTime"]; // TODO 2017-10-01 make this less hacky
+            globalState.vars["lastSaveTime"] = globalState.vars["startTime"]; // TODO 2017-10-01 make this less hacky
             var pollFreq = 5000;
             var refreshIntervalId = setInterval("collectInput()", pollFreq);
             document.onkeypress = function(evt) {
