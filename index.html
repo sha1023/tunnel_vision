@@ -4,10 +4,6 @@
         <p><i>I do not like work even when someone else does it.</i> -- MT</p>
         <hr>
         <hr>
-        <p id="test"> goodbye<p>
-        <p><b>Temporary</b> Save to Browser (Download to get a file copy): <button onclick="saveState()">Save?</button></p>
-        <p>Load last saved State: <button onclick="loadSavedState()">Load...</button></p>
-        <br>
         <div id="leftSandbox" style="float:left;border-size:1px;"></div>
         <div id="rightSandbox" style="float:right;border-size:1px;"></div>
         <div style="clear:both; bottom: 5px;">
@@ -17,7 +13,10 @@
             <button onclick="resetStartTime()" id="start_time">Start Time: </button>
             <br>
             <hr>
-            <button onclick="revealHiddenText()">What did I write?</button>
+            <p><button onclick="saveState()">Save?</button> (to browser)</p>
+            <p><input type="checkbox" id="auto_save"></input> 5 minute auto-save?</p>
+            <p><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
+            <button onclick="revealHiddenText()">Download what I wrote.</button>
         </div>
         <script>
             function getProjectName() {
@@ -68,6 +67,7 @@
                     return;
                 }
                 saveApi(name, {"text_box":texts, "notes":notes});
+                globalState["lastSaveTime"] = getTime();
             }
             function loadSavedState(name) {
                 if(name == null) {
@@ -194,8 +194,8 @@
                                 var sprintTime = document.getElementById("sprint_time");
                                 if(sprintTime.value >= 0) {
                                     var countdown = document.getElementById("countdown");
-                                    countdown.innerHTML = ((sprintTime.value * 60 + startTime - getTime())/60).toFixed(0) + " minutes to go.";
-                                    if(sprintTime.value * 60 + startTime <= getTime()) {
+                                    countdown.innerHTML = ((sprintTime.value * 60 + globalState["startTime"] - getTime())/60).toFixed(0) + " minutes to go.";
+                                    if(sprintTime.value * 60 + globalState["startTime"] <= getTime()) {
                                         alert("Times up!");
                                         resetStartTime();
                                     }
@@ -253,12 +253,12 @@
                 return new Date().getTime() / 1000;
             }
             function resetStartTime() {
-                startTime = getTime();
+                globalState["startTime"] = getTime();
                 globalState.vars["wordPerMinuteOffset"] = globalState.vars["wordCount"];
-                document.getElementById("start_time").innerHTML = "Start Time: " + (new Date(startTime * 1000)).toLocaleTimeString();
+                document.getElementById("start_time").innerHTML = "Start Time: " + (new Date(globalState["startTime"] * 1000)).toLocaleTimeString();
             }
             function computeWordsPerMinute() {
-                return (globalState.vars["wordCount"]-globalState.vars["wordPerMinuteOffset"])*60.0/( getTime() - startTime);
+                return (globalState.vars["wordCount"]-globalState.vars["wordPerMinuteOffset"])*60.0/( getTime() - globalState["startTime"]);
             }
             function toggleWordsPerMinute(){
                 if (document.getElementById("words_per_minute").style.visibility != "visible") {
@@ -306,6 +306,9 @@
                     numChars.innerHTML = "Characters so far: " + totalChars;
                     document.getElementById("num_words").innerHTML = "Word count: " + globalState.vars["wordCount"];
                 }
+                if (document.getElementById("auto_save").checked && (getTime() - globalState["lastSaveTime"] > 5*60)) {
+                    saveState();
+                }
                 for (key in widgetState) {
                     widgetState[key]();
                 }
@@ -322,19 +325,15 @@
                     hiddenWordCount: 0,
                     wordCount: 0,
                     wordPerMinuteOffset: 0,
-                    maxTextActive: true
+                    maxTextActive: true,
+                    startTime: -1,
+                    lastSaveTime: -1
                 }
             }
-            //var hiddenText = "";
-            //var hiddenWordCount = 0;
-            //var wordCount = 0;
-            //var wordPerMinuteOffset = 0;
-            //var maxTextActive = true;
-
-
 
             var widgetState = setupDivsFromURL();
             resetStartTime();
+            globalState["lastSaveTime"] = globalState["startTime"]; // TODO 2017-10-01 make this less hacky
             var pollFreq = 5000;
             var refreshIntervalId = setInterval("collectInput()", pollFreq);
             document.onkeypress = function(evt) {
