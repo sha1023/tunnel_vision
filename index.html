@@ -318,6 +318,7 @@
                 }
             }
             function revealHiddenText() {
+                saveState();
                 collectInput(0);
                 document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(globalState.vars["hiddenText"]) +"' target=\"_blank\" download=\"tv.txt\">Download it!!</a><p style=\"white-space:pre-wrap;\">" + globalState.vars["hiddenText"] + "</p></body></html>");
                 document.close();
