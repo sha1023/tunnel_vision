@@ -306,7 +306,7 @@
                     numChars.innerHTML = "Characters so far: " + totalChars;
                     document.getElementById("num_words").innerHTML = "Word count: " + globalState.vars["wordCount"];
                 }
-                if (document.getElementById("auto_save").checked && (getTime() - globalState.vars["lastSaveTime"] > 5*2)) {
+                if (document.getElementById("auto_save").checked && (getTime() - globalState.vars["lastSaveTime"] > 5*60)) {
                     saveState();
                 }
                 for (key in widgetState) {
