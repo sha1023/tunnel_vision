@@ -4,6 +4,7 @@
         <p><i>I do not like work even when someone else does it.</i> -- MT</p>
         <hr>
         <hr>
+        <button onclick="toggleDefaultParams()">Show/Hide Default Settings</button><p id="defaultParams"></p>
         <div id="leftSandbox" style="float:left;border-size:1px;"></div>
         <div id="rightSandbox" style="float:right;border-size:1px;"></div>
         <div style="clear:both; bottom: 5px;">
@@ -61,8 +62,17 @@
                 if(name == null) {
                     name = getProjectName();
                 }
-                var texts = globalState.vars["hiddenText"] + document.getElementById("text_box").value;
-                var notes = document.getElementById("notes").value;
+                var textBoxElement = document.getElementById("text_box");
+                var textBox = "";
+                if(textBoxElement != null){
+                    textBox = textBoxElement.value;
+                }
+                var texts = globalState.vars["hiddenText"] + textBox;
+                var notesElement = document.getElementById("notes");
+                var notes = "";
+                if(notesElement != null) {
+                    notes = notesElement.value;
+                }
                 if(texts == null || texts.length == 0) {
                     alert("No data to save.");
                     return;
@@ -276,6 +286,17 @@
                 }
                 return widgetStateUpdate;
             }
+            function getDefaultParams() {
+                return "?L1=tunnel&L2=stats&R1=notes&L3=wpm&R2=sprint";
+            }
+            function toggleDefaultParams() {
+                var display = document.getElementById("defaultParams");
+                if(display.innerHTML == "") {
+                    display.innerHTML = window.location.href + getDefaultParams();
+                } else {
+                    display.innerHTML = "";
+                }
+            }
             function setupDivsFromURL() {
                 var widgetState = {};
                 //var divTypes = ["timer", "notes", "window", "sprint", "wpm", "stats"];
@@ -283,7 +304,7 @@
                 var url = window.location.href;
                 if(!document.location.search.length) {
                     //default to :
-                    url += "?L1=tunnel&L2=stats&R1=notes&L3=wpm&R2=sprint";
+                    url += getDefaultParams();
                 }
                 var divLocs = ["L1", "L2", "L3", "L4", "L5", "L6", "R1", "R2", "R3", "R4", "R5", "R6"];
                 for(var i = 0; i < divLocs.length; i++) {
