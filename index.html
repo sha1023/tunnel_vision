@@ -236,14 +236,14 @@
                             disableSprint.type = "checkbox";
                             disableSprint.id = "disableSprint";
                             disableSprint.checked = true;
-                            var noDisplayLimitParent = document.createElement("p");
-                            noDisplayLimitParent.innerHTML = "disable sprint?";
-                            noDisplayLimitParent.appendChild(disableSprint);
+                            var disableSprintParent = document.createElement("p");
+                            disableSprintParent.innerHTML = "disable sprint?";
+                            disableSprintParent.appendChild(disableSprint);
 
                             var countdown = document.createElement("p");
                             countdown.id = "countdown";
                             countdown.innerHTML = "-1 minutes to go";
-                            element.appendChild(disableSprint);
+                            element.appendChild(disableSprintParent);
                             element.appendChild(sprintParent);
                             element.appendChild(countdown);
 
