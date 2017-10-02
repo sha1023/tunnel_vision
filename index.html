@@ -216,22 +216,30 @@
                             var sprint = document.createElement("input");
                             sprint.type= "number";
                             sprint.id = "sprint_time";
-                            sprint.min = "-1";
-                            sprint.placeholder = "-1";
-                            sprint.defaultValue = "-1";
+                            sprint.min = "1";
+                            sprint.placeholder = "15";
+                            sprint.defaultValue = "15";
                             var sprintParent = document.createElement("p");
-                            sprintParent.innerHTML = "sprint length in minutes (-1 disables) ";
+                            sprintParent.innerHTML = "sprint length in minutes";
                             sprintParent.appendChild(sprint);
+                            disableSprint = document.createElement("input");
+                            disableSprint.type = "checkbox";
+                            disableSprint.id = "disableSprint";
+                            disableSprint.checked = true;
+                            var noDisplayLimitParent = document.createElement("p");
+                            noDisplayLimitParent.innerHTML = "disable sprint?";
+                            noDisplayLimitParent.appendChild(disableSprint);
 
                             var countdown = document.createElement("p");
                             countdown.id = "countdown";
                             countdown.innerHTML = "-1 minutes to go";
+                            element.appendChild(disableSprint);
                             element.appendChild(sprintParent);
                             element.appendChild(countdown);
 
                             widgetStateUpdate[value] = function() {
                                 var sprintTime = document.getElementById("sprint_time");
-                                if(sprintTime.value >= 0) {
+                                if(!document.getElementById("disableSprint").checked) {
                                     var countdown = document.getElementById("countdown");
                                     countdown.innerHTML = ((sprintTime.value * 60 + globalState.vars["startTime"] - getTime())/60).toFixed(0) + " minutes to go.";
                                     if(sprintTime.value * 60 + globalState.vars["startTime"] <= getTime()) {
