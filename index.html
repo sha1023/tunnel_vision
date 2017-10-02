@@ -4,15 +4,14 @@
         <p><i>I do not like work even when someone else does it.</i> -- MT</p>
         <hr>
         <hr>
-        <button onclick="toggleDefaultParams()">Show/Hide Default Settings</button><p id="defaultParams"></p>
         <div id="leftSandbox" style="float:left;border-size:1px;"></div>
         <div id="rightSandbox" style="float:right;border-size:1px;"></div>
         <div style="clear:both; bottom: 5px;">
             <hr>
             <hr>
-            <br>
             <button onclick="resetStartTime()" id="start_time">Start Time: </button>
-            <br>
+            <button onclick="saveLayout()">Save Layout</button>
+            <button onclick="toggleDefaultParams()">Show/Hide Default Settings</button><p id="defaultParams"> </p>
             <hr>
             <p id="save_stats">Not Saved.</p>
             <p><button onclick="saveState()">Save?</button> (to browser)</p>
@@ -106,6 +105,12 @@
                 if (!results) return null;
                 if (!results[2]) return '';
                 return decodeURIComponent(results[2].replace(/\+/g, " "));
+            }
+            function saveLayout() {
+                var qParams = document.location.search;
+                if(qParams.length != 0) {
+                    saveApi(getProjectName(), {"layout": qParams});
+                }
             }
             function processDivLoc(key, value) {
                 var element = document.getElementById(key)
@@ -286,13 +291,20 @@
                 }
                 return widgetStateUpdate;
             }
-            function getDefaultParams() {
-                return "?L=tunnel,stats,wpm&R=notes,sprint";
+            function getDefaultParams(useUserDefinedDefault) {
+                var defaultLayout = "?L=tunnel,stats,wpm&R=notes,sprint";
+                if(useUserDefinedDefault) {
+                    var userDefinedLayout = getApi(getProjectName(), ["layout"]);
+                    if(userDefinedLayout["layout"] != null) {
+                        defaultLayout = userDefinedLayout["layout"];
+                    }
+                }
+                return defaultLayout
             }
             function toggleDefaultParams() {
                 var display = document.getElementById("defaultParams");
-                if(display.innerHTML == "") {
-                    display.innerHTML = getDefaultParams();
+                if(display.innerHTML.trim() == "") {
+                    display.innerHTML = "Original: " + getDefaultParams(false) + " Current: " + getDefaultParams(true);
                 } else {
                     display.innerHTML = "";
                 }
@@ -303,7 +315,7 @@
                 var url = window.location.href;
                 if(!document.location.search.length) {
                     //default to :
-                    url += getDefaultParams();
+                    url += getDefaultParams(true);
                 }
                 var divLocs = ["L", "R"];
                 for(var i = 0; i < divLocs.length; i++) {
