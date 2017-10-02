@@ -287,12 +287,12 @@
                 return widgetStateUpdate;
             }
             function getDefaultParams() {
-                return "?L1=tunnel&L2=stats&R1=notes&L3=wpm&R2=sprint";
+                return "?L=tunnel,stats,wpm&R=notes,sprint";
             }
             function toggleDefaultParams() {
                 var display = document.getElementById("defaultParams");
                 if(display.innerHTML == "") {
-                    display.innerHTML = window.location.href + getDefaultParams();
+                    display.innerHTML = getDefaultParams();
                 } else {
                     display.innerHTML = "";
                 }
@@ -300,19 +300,26 @@
             function setupDivsFromURL() {
                 var widgetState = {};
                 //var divTypes = ["timer", "notes", "window", "sprint", "wpm", "stats"];
-                //L1=tunnel&L2=stats&R1=notes&L3=wpm&R2=sprint
                 var url = window.location.href;
                 if(!document.location.search.length) {
                     //default to :
                     url += getDefaultParams();
                 }
-                var divLocs = ["L1", "L2", "L3", "L4", "L5", "L6", "R1", "R2", "R3", "R4", "R5", "R6"];
+                var divLocs = ["L", "R"];
                 for(var i = 0; i < divLocs.length; i++) {
-                    var key = divLocs[i];
-                    var value = getParameterByName(key, url);
-                    var widgetStateUpdate = processDivLoc(key, value);
-                    for(key in widgetStateUpdate) {
-                        widgetState[key] = widgetStateUpdate[key];
+                    var paramKey = divLocs[i];
+                    var valuesString = getParameterByName(paramKey, url);
+                    var values = [];
+                    if(valuesString) {
+                        values = valuesString.split(",");
+                    }
+                    for(var j=0;j<values.length;j++) {
+                        var value = values[j];
+                        var locKey = paramKey + j;
+                        var widgetStateUpdate = processDivLoc(locKey, value);
+                        for(var key in widgetStateUpdate) {
+                            widgetState[key] = widgetStateUpdate[key];
+                        }
                     }
                 }
                 return widgetState;
