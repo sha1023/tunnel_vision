@@ -396,6 +396,7 @@
                 var charStr = String.fromCharCode(charCode);
                 if(evt.ctrlKey && charStr == "s") {
                     saveState();
+                    evt.preventDefault();
                 }
             }
         </script>
