@@ -15,7 +15,7 @@
             <hr>
             <p id="save_stats">Not Saved.</p>
             <p><button onclick="saveState()">Save?</button> (to browser)</p>
-            <p><input type="checkbox" id="auto_save"></input> 5 minute auto-save?</p>
+            <p><input type="checkbox" id="auto_save" checked></input> 5 minute auto-save?</p>
             <p><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
             <button onclick="revealHiddenText()">Download what I wrote.</button>
         </div>
@@ -158,6 +158,35 @@
                             element.appendChild(maxTextParent);
                             element.appendChild(noDisplayLimitParent);
                             element.appendChild(tunnel);
+                            widgetStateUpdate[value] = function() { //maybe this is a fundamental function and should be just a widget?
+                                var textBox = document.getElementById("text_box");
+                                var excessText = textBox.value.length; // Edge case that there are no spaces
+                                var maxTextLength;
+                                var maxTextInput = document.getElementById("max_text");
+                                if(maxTextInput.value < maxTextInput.min || maxTextInput.value > maxTextInput.max) {
+                                    maxTextInput.value = maxTextInput.defaultValue;
+                                }
+                                maxTextLength = maxTextInput.value;
+
+                                if(maxTextLength != 0) {
+                                    var excessTextSpace = textBox.value.lastIndexOf(" ", textBox.value.length - maxTextLength);
+                                    var excessTextNewline = textBox.value.lastIndexOf("\n", textBox.value.length - maxTextLength);
+                                    excessText = excessTextSpace;
+                                    if( excessText < excessTextNewline) {
+                                        excessText = excessTextNewline;
+                                    }
+                                }
+                                var keepText = textBox.value;
+                                if(maxTextLength == 0 || (excessText > 0 && !document.getElementById("noDisplayLimit").checked)) {
+                                    var newText = textBox.value.substring(0, excessText);
+                                    var newWords = newText.split(/[ \n]+/);
+                                    newWords = newWords.filter(function(entry) { return entry != ""; });
+                                    globalState.vars["hiddenWordCount"] += newWords.length 
+                                    globalState.vars["hiddenText"] += newText;
+                                    keepText = textBox.value.substring(excessText, textBox.value.length+10);
+                                    textBox.value = keepText;
+                                }
+                            }
                         }
                         break;
                     case "stats":
@@ -172,6 +201,12 @@
                             element.appendChild(numChars);
                             element.appendChild(numWords);
                             widgetStateUpdate[value] = function () {
+                                var textBox = document.getElementById("text_box");
+                                var totalChars = globalState.vars["hiddenText"].length + textBox.value.length;
+                                globalState.vars["wordCount"] = globalState.vars["hiddenWordCount"] + textBox.value.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
+                                var numChars = document.getElementById("num_chars")
+                                numChars.innerHTML = "Characters so far: " + totalChars;
+                                document.getElementById("num_words").innerHTML = "Word count: " + globalState.vars["wordCount"];
                             }
                         }
                         break;
@@ -274,53 +309,19 @@
             function toggleMaxTextActive() {
                 globalState.vars["maxTextActive"] = ! globalState.vars["maxTextActive"];
             }
-            function collectInput(maxText) {
-                var textBox = document.getElementById("text_box");
-                var excessText = textBox.value.length; // Edge case that there are no spaces
-                if(maxText == null) {
-                    var maxTextInput = document.getElementById("max_text");
-                    if(maxTextInput.value < maxTextInput.min || maxTextInput.value > maxTextInput.max) {
-                        maxTextInput.value = maxTextInput.defaultValue;
-                    }
-                    maxText = maxTextInput.value;
-                }
-
-                if(maxText != 0) {
-                    var excessTextSpace = textBox.value.lastIndexOf(" ", textBox.value.length - maxText);
-                    var excessTextNewline = textBox.value.lastIndexOf("\n", textBox.value.length - maxText);
-                    excessText = excessTextSpace;
-                    if( excessText < excessTextNewline) {
-                        excessText = excessTextNewline;
-                    }
-                }
-                var keepText = textBox.value;
-                var totalChars = globalState.vars["hiddenText"].length + textBox.value.length;
-                if(maxText == 0 || (excessText > 0 && !document.getElementById("noDisplayLimit").checked)) {
-                    var newText = textBox.value.substring(0, excessText);
-                    var newWords = newText.split(/[ \n]+/);
-                    newWords = newWords.filter(function(entry) { return entry != ""; });
-                    globalState.vars["hiddenWordCount"] += newWords.length 
-                    globalState.vars["hiddenText"] += newText;
-                    keepText = textBox.value.substring(excessText, textBox.value.length+10);
-                    textBox.value = keepText;
-                }
-                globalState.vars["wordCount"] = globalState.vars["hiddenWordCount"] + keepText.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
-                var numChars = document.getElementById("num_chars")
-                if(numChars != null) {
-                    numChars.innerHTML = "Characters so far: " + totalChars;
-                    document.getElementById("num_words").innerHTML = "Word count: " + globalState.vars["wordCount"];
+            function collectInput() {
+                for (key in widgetState) {
+                    widgetState[key]();
                 }
                 if (document.getElementById("auto_save").checked && (getTime() - globalState.vars["lastSaveTime"] > 5*60)) {
                     saveState();
                 }
-                for (key in widgetState) {
-                    widgetState[key]();
-                }
             }
             function revealHiddenText() {
+                collectInput();
                 saveState();
-                collectInput(0);
-                document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(globalState.vars["hiddenText"]) +"' target=\"_blank\" download=\"tv.txt\">Download it!!</a><p style=\"white-space:pre-wrap;\">" + globalState.vars["hiddenText"] + "</p></body></html>");
+                var totalText = globalState.vars["hiddenText"] + document.getElementById("text_box").value;
+                document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(totalText) +"' target=\"_blank\" download=\"tv.txt\">Download it!!</a><p style=\"white-space:pre-wrap;\">" + totalText + "</p></body></html>");
                 document.close();
             }
 
