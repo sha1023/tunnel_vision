@@ -301,7 +301,9 @@
 
                             //toggle wpm visibility:
                             function toggleWordsPerMinute() {
-                                for(var wpmElem in ["wpm_reset_button", "words_per_minute"]) {
+                                var wpmElems = ["wpm_reset_button", "words_per_minute"];
+                                for(var i in wpmElems) {
+                                    var wpmElem = wpmElems[i];
                                     if (document.getElementById(wpmElem).style.visibility != "visible") {
                                        document.getElementById(wpmElem).style.visibility = "visible" ;
                                     } else {
