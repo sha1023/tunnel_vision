@@ -65,7 +65,7 @@
                 if(textBoxElement != null){
                     textBox = textBoxElement.value;
                 }
-                var texts = globalState.vars["hiddenText"] + textBox;
+                var texts = globalState.vars["hidden_text"] + textBox;
                 var notesElement = document.getElementById("notes");
                 var notes = "";
                 if(notesElement != null) {
@@ -77,7 +77,7 @@
                 }
                 saveApi(name, {"text_box":texts, "notes":notes});
                 globalState.vars["last_saved_time"] = getTime();
-                document.getElementById("save_stats").innerHTML = "Saved " + globalState.vars["wordCount"] + " words @ " + (new Date(globalState.vars["last_saved_time"] * 1000)).toLocaleTimeString() + ".";
+                document.getElementById("save_stats").innerHTML = "Saved " + globalState.vars["word_count"] + " words @ " + (new Date(globalState.vars["last_saved_time"] * 1000)).toLocaleTimeString() + ".";
             }
             function loadSavedState(name) {
                 if(name == null) {
@@ -88,7 +88,7 @@
                     return;
                 }
                 var state = getApi(name, ["text_box", "notes"]);
-                globalState.vars["hiddenText"] = "";
+                globalState.vars["hidden_text"] = "";
                 if(state["text_box"] != null) {
                     document.getElementById("text_box").value = state["text_box"];
                 }
@@ -195,8 +195,8 @@
                                     var newText = textBox.value.substring(0, excessText);
                                     var newWords = newText.split(/[ \n]+/);
                                     newWords = newWords.filter(function(entry) { return entry != ""; });
-                                    globalState.vars["hiddenWordCount"] += newWords.length 
-                                    globalState.vars["hiddenText"] += newText;
+                                    globalState.vars["hidden_word_count"] += newWords.length 
+                                    globalState.vars["hidden_text"] += newText;
                                     keepText = textBox.value.substring(excessText, textBox.value.length+10);
                                     textBox.value = keepText;
                                 }
@@ -216,11 +216,11 @@
                             element.appendChild(numWords);
                             widgetStateUpdate[value] = function () {
                                 var textBox = document.getElementById("text_box");
-                                var totalChars = globalState.vars["hiddenText"].length + textBox.value.length;
-                                globalState.vars["wordCount"] = globalState.vars["hiddenWordCount"] + textBox.value.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
+                                var totalChars = globalState.vars["hidden_text"].length + textBox.value.length;
+                                globalState.vars["word_count"] = globalState.vars["hidden_word_count"] + textBox.value.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
                                 var numChars = document.getElementById("num_chars")
                                 numChars.innerHTML = "Characters so far: " + totalChars;
-                                document.getElementById("num_words").innerHTML = "Word count: " + globalState.vars["wordCount"];
+                                document.getElementById("num_words").innerHTML = "Word count: " + globalState.vars["word_count"];
                             }
                         }
                         break;
@@ -277,6 +277,7 @@
                     case "wpm":
                         var wpmToggleButton = document.getElementById("wpm_toggle");
                         if(wpmToggleButton == null){
+                            globalState.vars["wpm_offset"] = 0;
                             //wpm stat:
                             var wpm = document.createElement("p");
                             wpm.id = "words_per_minute";
@@ -285,12 +286,12 @@
 
                             //reset wpm:
                             function resetWPMStartTime() {
-                                globalState.vars["wordPerMinuteOffset"] = globalState.vars["wordCount"];
+                                globalState.vars["wpm_offset"] = globalState.vars["word_count"];
                                 globalState.vars["wpm_start_time"] = getTime();
                             }
                             resetWPMStartTime();
                             function computeWordsPerMinute() {
-                                return (globalState.vars["wordCount"]-globalState.vars["wordPerMinuteOffset"])*60.0/( getTime() - globalState.vars["wpm_start_time"]);
+                                return (globalState.vars["word_count"]-globalState.vars["wpm_offset"])*60.0/( getTime() - globalState.vars["wpm_start_time"]);
                             }
                             var wpmResetButton = document.createElement("BUTTON");
                             wpmResetButton.id = "wpm_reset_button";
@@ -376,9 +377,6 @@
             function getTime() {
                 return new Date().getTime() / 1000;
             }
-            function toggleMaxTextActive() {
-                globalState.vars["maxTextActive"] = ! globalState.vars["maxTextActive"];
-            }
             function collectInput() {
                 for (key in widgetState) {
                     widgetState[key]();
@@ -390,18 +388,16 @@
             function revealHiddenText() {
                 collectInput();
                 saveState();
-                var totalText = globalState.vars["hiddenText"] + document.getElementById("text_box").value;
+                var totalText = globalState.vars["hidden_text"] + document.getElementById("text_box").value;
                 document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(totalText) +"' target=\"_blank\" download=\"tv.txt\">Download it!!</a><p style=\"white-space:pre-wrap;\">" + totalText + "</p></body></html>");
                 document.close();
             }
 
             var globalState = { 
                 vars: {
-                    hiddenText: "", 
-                    hiddenWordCount: 0,
-                    wordCount: 0,
-                    wordPerMinuteOffset: 0,
-                    maxTextActive: true,
+                    hidden_text: "", 
+                    hidden_word_count: 0,
+                    word_count: 0,
                     last_saved_time: getTime()
                 }
             }
