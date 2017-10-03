@@ -246,7 +246,7 @@
                                 var sprintTime = document.getElementById("sprint_time");
                                 var countdown = document.getElementById("countdown");
                                 var timeToGo = sprintTime.value * 60 + globalState.vars["sprint_start_time"] - getTime();
-                                countdown.innerHTML =  Math.floor(timeToGo/60) + " minutes and " + timeToGo%60 + " seconds to go.";
+                                countdown.innerHTML =  Math.floor(timeToGo/60) + " minutes and " + (timeToGo%60).toFixed(0) + " seconds to go.";
                             }
                             function resetSprintStartTime() {
                                 globalState.vars["sprint_start_time"] = getTime();
@@ -263,6 +263,7 @@
 
                             widgetStateUpdate[value] = function() {
                                 if(globalState.vars["sprint_start_time"] > 0) {
+                                    var sprintTime = document.getElementById("sprint_time");
                                     displaySprintTimeToGo();
                                     if(sprintTime.value * 60 + globalState.vars["sprint_start_time"] <= getTime()) {
                                         alert("Times up!");
