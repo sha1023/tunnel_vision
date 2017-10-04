@@ -9,7 +9,6 @@
         <div style="clear:both; bottom: 5px;">
             <hr>
             <hr>
-            <button onclick="resetStartTime()" id="start_time">Start Time: </button>
             <button onclick="saveLayout()">Save Layout</button>
             <button onclick="toggleDefaultParams()">Show/Hide Default Settings</button><p id="defaultParams"> </p>
             <hr>
@@ -66,7 +65,7 @@
                 if(textBoxElement != null){
                     textBox = textBoxElement.value;
                 }
-                var texts = globalState.vars["hiddenText"] + textBox;
+                var texts = globalState.vars["hidden_text"] + textBox;
                 var notesElement = document.getElementById("notes");
                 var notes = "";
                 if(notesElement != null) {
@@ -77,8 +76,8 @@
                     return;
                 }
                 saveApi(name, {"text_box":texts, "notes":notes});
-                globalState.vars["lastSaveTime"] = getTime();
-                document.getElementById("save_stats").innerHTML = "Saved " + globalState.vars["wordCount"] + " words @ " + (new Date(globalState.vars["lastSaveTime"] * 1000)).toLocaleTimeString() + ".";
+                globalState.vars["last_saved_time"] = getTime();
+                document.getElementById("save_stats").innerHTML = "Saved " + globalState.vars["word_count"] + " words @ " + (new Date(globalState.vars["last_saved_time"] * 1000)).toLocaleTimeString() + ".";
             }
             function loadSavedState(name) {
                 if(name == null) {
@@ -89,7 +88,7 @@
                     return;
                 }
                 var state = getApi(name, ["text_box", "notes"]);
-                globalState.vars["hiddenText"] = "";
+                globalState.vars["hidden_text"] = "";
                 if(state["text_box"] != null) {
                     document.getElementById("text_box").value = state["text_box"];
                 }
@@ -196,8 +195,8 @@
                                     var newText = textBox.value.substring(0, excessText);
                                     var newWords = newText.split(/[ \n]+/);
                                     newWords = newWords.filter(function(entry) { return entry != ""; });
-                                    globalState.vars["hiddenWordCount"] += newWords.length 
-                                    globalState.vars["hiddenText"] += newText;
+                                    globalState.vars["hidden_word_count"] += newWords.length 
+                                    globalState.vars["hidden_text"] += newText;
                                     keepText = textBox.value.substring(excessText, textBox.value.length+10);
                                     textBox.value = keepText;
                                 }
@@ -217,11 +216,11 @@
                             element.appendChild(numWords);
                             widgetStateUpdate[value] = function () {
                                 var textBox = document.getElementById("text_box");
-                                var totalChars = globalState.vars["hiddenText"].length + textBox.value.length;
-                                globalState.vars["wordCount"] = globalState.vars["hiddenWordCount"] + textBox.value.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
+                                var totalChars = globalState.vars["hidden_text"].length + textBox.value.length;
+                                globalState.vars["word_count"] = globalState.vars["hidden_word_count"] + textBox.value.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
                                 var numChars = document.getElementById("num_chars")
                                 numChars.innerHTML = "Characters so far: " + totalChars;
-                                document.getElementById("num_words").innerHTML = "Word count: " + globalState.vars["wordCount"];
+                                document.getElementById("num_words").innerHTML = "Word count: " + globalState.vars["word_count"];
                             }
                         }
                         break;
@@ -237,49 +236,90 @@
                             var sprintParent = document.createElement("p");
                             sprintParent.innerHTML = "sprint length in minutes";
                             sprintParent.appendChild(sprint);
-                            disableSprint = document.createElement("input");
-                            disableSprint.type = "checkbox";
-                            disableSprint.id = "disableSprint";
-                            disableSprint.checked = true;
-                            var disableSprintParent = document.createElement("p");
-                            disableSprintParent.innerHTML = "disable sprint?";
-                            disableSprintParent.appendChild(disableSprint);
 
                             var countdown = document.createElement("p");
                             countdown.id = "countdown";
-                            countdown.innerHTML = "-1 minutes to go";
-                            element.appendChild(disableSprintParent);
+                            countdown.innerHTML = "Press Button to Start Sprint";
+
+                            globalState.vars["sprint_start_time"] = -1;
+                            function displaySprintTimeToGo() {
+                                var sprintTime = document.getElementById("sprint_time");
+                                var countdown = document.getElementById("countdown");
+                                var timeToGo = sprintTime.value * 60 + globalState.vars["sprint_start_time"] - getTime();
+                                countdown.innerHTML =  Math.floor(timeToGo/60) + " minutes and " + (timeToGo%60).toFixed(0) + " seconds to go.";
+                            }
+                            function resetSprintStartTime() {
+                                globalState.vars["sprint_start_time"] = getTime();
+                                displaySprintTimeToGo();
+                            }
+                            var sprintResetButton = document.createElement("BUTTON");
+                            sprintResetButton.id = "sprint_reset_button";
+                            sprintResetButton.onclick = resetSprintStartTime;
+                            sprintResetButton.innerHTML = "Start Sprint";
+
+                            element.appendChild(sprintResetButton);
                             element.appendChild(sprintParent);
                             element.appendChild(countdown);
 
                             widgetStateUpdate[value] = function() {
-                                var sprintTime = document.getElementById("sprint_time");
-                                if(!document.getElementById("disableSprint").checked) {
-                                    var countdown = document.getElementById("countdown");
-                                    countdown.innerHTML = ((sprintTime.value * 60 + globalState.vars["startTime"] - getTime())/60).toFixed(0) + " minutes to go.";
-                                    if(sprintTime.value * 60 + globalState.vars["startTime"] <= getTime()) {
+                                if(globalState.vars["sprint_start_time"] > 0) {
+                                    var sprintTime = document.getElementById("sprint_time");
+                                    displaySprintTimeToGo();
+                                    if(sprintTime.value * 60 + globalState.vars["sprint_start_time"] <= getTime()) {
                                         alert("Times up!");
-                                        resetStartTime();
+                                        globalState.vars["sprint_start_time"] = -1;
+                                        countdown.innerHTML = "Press Button to Start Sprint";
                                     }
                                 }
                             }
                         }
                         break;
                     case "wpm":
-                        var wpmButton = document.getElementById("wpm_button");
-                        if(wpmButton == null){
-                            var wpmButton = document.createElement("BUTTON");
-                            wpmButton.id = "wpm_button";
-                            wpmButton.onclick = toggleWordsPerMinute;
-                            wpmButton.innerHTML = "Toggle Words/Minute";
-
+                        var wpmToggleButton = document.getElementById("wpm_toggle");
+                        if(wpmToggleButton == null){
+                            globalState.vars["wpm_offset"] = 0;
+                            //wpm stat:
                             var wpm = document.createElement("p");
                             wpm.id = "words_per_minute";
-                            wpm.innerHTML = "Words/Minute: 0";
+                            wpm.innerHTML = "Words/Minute: 0.0";
                             wpm.style.visibility = "visible";
 
-                            element.appendChild(wpmButton);
+                            //reset wpm:
+                            function resetWPMStartTime() {
+                                globalState.vars["wpm_offset"] = globalState.vars["word_count"];
+                                globalState.vars["wpm_start_time"] = getTime();
+                            }
+                            resetWPMStartTime();
+                            function computeWordsPerMinute() {
+                                return (globalState.vars["word_count"]-globalState.vars["wpm_offset"])*60.0/( getTime() - globalState.vars["wpm_start_time"]);
+                            }
+                            var wpmResetButton = document.createElement("BUTTON");
+                            wpmResetButton.id = "wpm_reset_button";
+                            wpmResetButton.onclick = resetWPMStartTime;
+                            wpmResetButton.innerHTML = "Reset Words/Minute";
+                            wpmResetButton.style.visibility = "visible";
+
+                            //toggle wpm visibility:
+                            function toggleWordsPerMinute() {
+                                var wpmElems = ["wpm_reset_button", "words_per_minute"];
+                                for(var i in wpmElems) {
+                                    var wpmElem = wpmElems[i];
+                                    if (document.getElementById(wpmElem).style.visibility != "visible") {
+                                       document.getElementById(wpmElem).style.visibility = "visible" ;
+                                    } else {
+                                       document.getElementById(wpmElem).style.visibility = "hidden" ;
+                                    }
+                                }
+                            }
+                            var wpmToggleButton = document.createElement("BUTTON");
+                            wpmToggleButton.id = "wpm_toggle";
+                            wpmToggleButton.onclick = toggleWordsPerMinute;
+                            wpmToggleButton.innerHTML = "Toggle Words/Minute";
+
+                            element.appendChild(wpmToggleButton);
+                            element.appendChild(wpmResetButton);
                             element.appendChild(wpm);
+
                             widgetStateUpdate[value] = function() {
                                 var wpm = document.getElementById("words_per_minute")
                                 if(wpm != null) {
@@ -339,55 +379,32 @@
             function getTime() {
                 return new Date().getTime() / 1000;
             }
-            function resetStartTime() {
-                globalState.vars["startTime"] = getTime();
-                globalState.vars["wordPerMinuteOffset"] = globalState.vars["wordCount"];
-                document.getElementById("start_time").innerHTML = "Start Time: " + (new Date(globalState.vars["startTime"] * 1000)).toLocaleTimeString();
-            }
-            function computeWordsPerMinute() {
-                return (globalState.vars["wordCount"]-globalState.vars["wordPerMinuteOffset"])*60.0/( getTime() - globalState.vars["startTime"]);
-            }
-            function toggleWordsPerMinute(){
-                if (document.getElementById("words_per_minute").style.visibility != "visible") {
-                   document.getElementById("words_per_minute").style.visibility = "visible" ;
-                } else {
-                   document.getElementById("words_per_minute").style.visibility = "hidden" ;
-                }
-            }
-            function toggleMaxTextActive() {
-                globalState.vars["maxTextActive"] = ! globalState.vars["maxTextActive"];
-            }
             function collectInput() {
                 for (key in widgetState) {
                     widgetState[key]();
                 }
-                if (document.getElementById("auto_save").checked && (getTime() - globalState.vars["lastSaveTime"] > 5*60)) {
+                if (document.getElementById("auto_save").checked && (getTime() - globalState.vars["last_saved_time"] > 5*60)) {
                     saveState();
                 }
             }
             function revealHiddenText() {
                 collectInput();
                 saveState();
-                var totalText = globalState.vars["hiddenText"] + document.getElementById("text_box").value;
+                var totalText = globalState.vars["hidden_text"] + document.getElementById("text_box").value;
                 document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(totalText) +"' target=\"_blank\" download=\"tv.txt\">Download it!!</a><p style=\"white-space:pre-wrap;\">" + totalText + "</p></body></html>");
                 document.close();
             }
 
             var globalState = { 
                 vars: {
-                    hiddenText: "", 
-                    hiddenWordCount: 0,
-                    wordCount: 0,
-                    wordPerMinuteOffset: 0,
-                    maxTextActive: true,
-                    startTime: -1,
-                    lastSaveTime: -1
+                    hidden_text: "", 
+                    hidden_word_count: 0,
+                    word_count: 0,
+                    last_saved_time: getTime()
                 }
             }
 
             var widgetState = setupDivsFromURL();
-            resetStartTime();
-            globalState.vars["lastSaveTime"] = globalState.vars["startTime"]; // TODO 2017-10-01 make this less hacky
             var pollFreq = 5000;
             var refreshIntervalId = setInterval("collectInput()", pollFreq);
             document.onkeypress = function(evt) {
