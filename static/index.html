@@ -351,6 +351,7 @@
                 }
                 return defaultLayout
             }
+            //copy pasted from a blog entry about Fisher-Yates Shuffle
             function shuffle(array) {
                 var m = array.length, t, i;
 
@@ -394,7 +395,7 @@
                     var origParams = getDefaultParams(false);
                     var userParams = getDefaultParams(true);
                     var randParams = getRandomParams();
-                    defaultLayouts.innerHTML = "Orig: <a href=\"" + origParams +"\">" + origParams + "</a><br>User: <a href=\"" + userParams +"\">" + userParams +"</a><br>Rand: <a href=\"" + randParams +"\">" + randParams + "</a>";
+                    defaultLayouts.innerHTML = "<b>Suggested:</b> <a href=\"" + origParams +"\">" + origParams + "</a><br><b>Saved:</b> <a href=\"" + userParams +"\">" + userParams +"</a><br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
                 }
                 if(defaultLayouts.style.display == "none") {
                     defaultLayouts.style.display = "block";
@@ -426,7 +427,8 @@
                     if(valuesString) {
                         values = valuesString.split(",");
                     }
-                    document.getElementById(paramKey).innerHTML = paramKey + " = " + valuesString;
+                    //Not protected as divLocs ought to be legal
+                    document.getElementById(paramKey).innerHTML = "<b>" + paramKey + " = " + valuesString + "</b>";
                     for(var j=0;j<values.length;j++) {
                         var value = values[j];
                         var widgetStateUpdate = createWidgetDiv(paramKey, value);
