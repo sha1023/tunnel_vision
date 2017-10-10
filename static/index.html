@@ -46,7 +46,7 @@
                 }
                 return jsonToReturn;
             }
-            function saveApi(name, jsonToBeSaved) {
+            function setApi(name, jsonToBeSaved) {
                 var localStorage = window.localStorage;
                 var keyDelim = "-";
                 if(name == null || name.length == 0) {
@@ -83,7 +83,7 @@
                     alert("Error retrieving text.");
                     return;
                 }
-                saveApi(name, {"text_box":text, "notes":notes});
+                setApi(name, {"text_box":text, "notes":notes});
                 globalState.vars["last_saved_time"] = getTime();
                 document.getElementById("save_stats").innerHTML = "-- Saved " + globalState.vars["word_count"] + " words @ " + (new Date(globalState.vars["last_saved_time"] * 1000)).toLocaleTimeString() + ". --";
             }
@@ -107,7 +107,7 @@
             function saveLayout() {
                 var qParams = document.location.search;
                 if(qParams.length != 0) {
-                    saveApi(getProjectName(), {"layout": qParams});
+                    setApi(getProjectName(), {"layout": qParams});
                 }
             }
             function getParameterByName(name, url) {
