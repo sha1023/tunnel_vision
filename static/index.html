@@ -145,8 +145,8 @@
                     case "tunnel":
                         var tunnel = document.getElementById("text_box");
                         if(tunnel == null) {
-                            var tunnelHeading = document.createElement("p");
-                            tunnelHeading.innerHTML = "<i>Write here</i>:";
+                            var heading = document.createElement("p");
+                            heading.innerHTML = "<i>Write here</i>:";
 
                             var maxText = document.createElement("input");
                             maxText.type = "number";
@@ -170,7 +170,7 @@
                             tunnel.id = "text_box";
                             tunnel.rows = "2";
                             tunnel.cols = "50";
-                            element.appendChild(tunnelHeading);
+                            element.appendChild(heading);
                             element.appendChild(tunnel);
                             element.appendChild(enableCharLimitParent);
                             element.appendChild(maxTextParent);
