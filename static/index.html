@@ -230,19 +230,19 @@
                             sprint.placeholder = "15";
                             sprint.defaultValue = "15";
                             var sprintParent = document.createElement("p");
-                            sprintParent.innerHTML = "sprint length in minutes";
+                            sprintParent.innerHTML = "Minutes in sprint: ";
                             sprintParent.appendChild(sprint);
 
                             var countdown = document.createElement("p");
                             countdown.id = "countdown";
-                            countdown.innerHTML = "Press Button to Start Sprint";
+                            countdown.innerHTML = "-- X minutes and X seconds to go. --";
 
                             globalState.vars["sprint_start_time"] = -1;
                             function displaySprintTimeToGo() {
                                 var sprintTime = document.getElementById("sprint_time");
                                 var countdown = document.getElementById("countdown");
                                 var timeToGo = sprintTime.value * 60 + globalState.vars["sprint_start_time"] - getTime();
-                                countdown.innerHTML =  Math.floor(timeToGo/60) + " minutes and " + (timeToGo%60).toFixed(0) + " seconds to go.";
+                                countdown.innerHTML =  "-- " + Math.floor(timeToGo/60) + " minutes and " + (timeToGo%60).toFixed(0) + " seconds to go. --";
                             }
                             function resetSprintStartTime() {
                                 globalState.vars["sprint_start_time"] = getTime();
@@ -252,10 +252,10 @@
                             sprintResetButton.id = "sprint_reset_button";
                             sprintResetButton.onclick = resetSprintStartTime;
                             sprintResetButton.innerHTML = "Start Sprint";
+                            sprintParent.appendChild(sprintResetButton);
 
-                            element.appendChild(sprintResetButton);
-                            element.appendChild(sprintParent);
                             element.appendChild(countdown);
+                            element.appendChild(sprintParent);
 
                             widgetStateUpdate[widgetType] = function() {
                                 if(globalState.vars["sprint_start_time"] > 0) {
@@ -264,7 +264,7 @@
                                     if(sprintTime.value * 60 + globalState.vars["sprint_start_time"] <= getTime()) {
                                         alert("Times up!");
                                         globalState.vars["sprint_start_time"] = -1;
-                                        countdown.innerHTML = "Press Button to Start Sprint";
+                                        countdown.innerHTML = "-- X minutes and X seconds to go. --";
                                     }
                                 }
                             }
