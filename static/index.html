@@ -14,11 +14,11 @@
             <button onclick="saveLayout()">Save Layout</button>
             <button onclick="toggleLayouts()">Show/Hide URL Settings</button><p id="defaultLayouts" style="display:none"> </p>
             <hr>
-            <p id="save_stats">Not Saved.</p>
+            <p id="save_stats">-- Not Saved. --</p>
             <p><button onclick="saveState()">Save?</button> (to browser)</p>
             <p><input type="checkbox" id="auto_save" checked> 5 minute auto-save?</p>
             <p><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
-            <button onclick="revealHiddenText()">Download what I wrote.</button>
+            <button onclick="toDownloadPage()">Download what I wrote.</button>
         </div>
         <script>
             function getTime() {
@@ -81,7 +81,7 @@
                 }
                 saveApi(name, {"text_box":text, "notes":notes});
                 globalState.vars["last_saved_time"] = getTime();
-                document.getElementById("save_stats").innerHTML = "Saved " + globalState.vars["word_count"] + " words @ " + (new Date(globalState.vars["last_saved_time"] * 1000)).toLocaleTimeString() + ".";
+                document.getElementById("save_stats").innerHTML = "-- Saved " + globalState.vars["word_count"] + " words @ " + (new Date(globalState.vars["last_saved_time"] * 1000)).toLocaleTimeString() + ". --";
             }
             function loadSavedState(name) {
                 if(name == null) {
@@ -393,7 +393,7 @@
                 }
                 return widgetState;
             }
-            function collectInput() {
+            function updateState() {
                 for (key in widgetState) {
                     widgetState[key]();
                 }
@@ -401,8 +401,8 @@
                     saveState();
                 }
             }
-            function revealHiddenText() {
-                collectInput();
+            function toDownloadPage() {
+                updateState();
                 saveState();
                 var totalText = document.getElementById("text_box").value;
                 document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(totalText) +"' target=\"_blank\" download=\"tv.txt\">Download it!!</a><p style=\"white-space:pre-wrap;\">" + totalText + "</p></body></html>");
@@ -418,7 +418,7 @@
 
             var widgetState = setupDivsFromURL();
             var pollFreq = 5000;
-            var refreshIntervalId = setInterval("collectInput()", pollFreq);
+            var refreshIntervalId = setInterval("updateState()", pollFreq);
             document.onkeypress = function(evt) {
                 evt = evt || window.event;
                 var charCode = evt.keyCode || evt.which;
