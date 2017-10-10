@@ -204,7 +204,7 @@
                         if(num_chars == null) {
                             var numChars = document.createElement("p");
                             numChars.id = "num_chars";
-                            numChars.innerHTML = "Characters so far: 0";
+                            numChars.innerHTML = "Char count: 0";
                             var numWords = document.createElement("p");
                             numWords.id = "num_words";
                             numWords.innerHTML = "Word count: 0";
@@ -215,7 +215,7 @@
                                 var totalChars = globalState.vars["hidden_text"].length + textBox.value.length;
                                 globalState.vars["word_count"] = globalState.vars["hidden_word_count"] + textBox.value.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
                                 var numChars = document.getElementById("num_chars")
-                                numChars.innerHTML = "Characters so far: " + totalChars;
+                                numChars.innerHTML = "Char count: " + totalChars;
                                 document.getElementById("num_words").innerHTML = "Word count: " + globalState.vars["word_count"];
                             }
                         }
