@@ -76,7 +76,9 @@
                     notes = notesElement.value;
                 }
                 if(text == null || text.length == 0) {
-                    alert("No data to save.");
+                    //don't save if nothing has been written.
+                    //suppress the alert for now.
+                    //alert("No data to save.");
                     return;
                 }
                 saveApi(name, {"text_box":text, "notes":notes});
