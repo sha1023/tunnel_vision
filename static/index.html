@@ -77,10 +77,10 @@
                 if(notesElement != null) {
                     notes = notesElement.value;
                 }
-                if(text == null || text.length == 0) {
-                    //don't save if nothing has been written.
+                if(text == null) {
+                    //don't save if text is null
                     //suppress the alert for now.
-                    //alert("No data to save.");
+                    alert("Error retrieving text.");
                     return;
                 }
                 saveApi(name, {"text_box":text, "notes":notes});
