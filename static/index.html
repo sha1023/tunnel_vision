@@ -12,7 +12,7 @@
             <hr>
             <hr>
             <button onclick="saveLayout()">Save Layout</button>
-            <button onclick="toggleLayouts()">Show/Hide URL Settings</button><p id="defaultLayouts" style="display:none"> </p>
+            <button onclick="toggleLayouts()">Show/Hide URL Layout </button><p id="defaultLayouts" style="display:none"> </p>
             <hr>
             <p id="save_stats">-- Not Saved. --</p>
             <p><button onclick="saveState()">Save?</button> (to browser)</p>
@@ -266,7 +266,7 @@
                             var wpmToggleButton = document.createElement("BUTTON");
                             wpmToggleButton.id = "wpm_toggle";
                             wpmToggleButton.onclick = toggleWordsPerMinute;
-                            wpmToggleButton.innerHTML = "Toggle Words/Minute";
+                            wpmToggleButton.innerHTML = "Show/Hide Words/Minute";
 
                             element.appendChild(wpmToggleButton);
                             element.appendChild(wpmResetButton);
@@ -351,7 +351,7 @@
                     var origParams = getDefaultParams(false);
                     var userParams = getDefaultParams(true);
                     var randParams = getRandomParams();
-                    defaultLayouts.innerHTML = "<b>Suggested:</b> <a href=\"" + origParams +"\">" + origParams + "</a><br><b>Saved:</b> <a href=\"" + userParams +"\">" + userParams +"</a><br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
+                    defaultLayouts.innerHTML = "Adjust url parameters to change layout:<br><b>Suggested:</b> <a href=\"" + origParams +"\">" + origParams + "</a><br><b>Saved:</b> <a href=\"" + userParams +"\">" + userParams +"</a><br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
                 }
                 if(defaultLayouts.style.display == "none") {
                     defaultLayouts.style.display = "block";
