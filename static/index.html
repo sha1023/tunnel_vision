@@ -179,7 +179,7 @@
                                 var excessText = textBox.value.length; // Edge case that there are no spaces
                                 var maxTextLength;
                                 var maxTextInput = document.getElementById("max_text");
-                                if(maxTextInput.value < maxTextInput.min || maxTextInput.value > maxTextInput.max) {
+                                if(parseInt(maxTextInput.value, 10) < parseInt(maxTextInput.min, 10) || parseInt(maxTextInput.value, 10) > parseInt(maxTextInput.max, 10)) {
                                     maxTextInput.value = maxTextInput.defaultValue;
                                 }
                                 maxTextLength = maxTextInput.value;
