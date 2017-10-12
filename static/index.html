@@ -174,35 +174,37 @@
                             element.appendChild(tunnel);
                             element.appendChild(enableCharLimitParent);
                             element.appendChild(maxTextParent);
-                            widgetStateUpdate[widgetType] = function() { //maybe this is a fundamental function and should be just a widget?
-                                var textBox = document.getElementById("text_box");
-                                var excessText = textBox.value.length; // Edge case that there are no spaces
-                                var maxTextLength;
-                                var maxTextInput = document.getElementById("max_text");
-                                if(parseInt(maxTextInput.value, 10) < parseInt(maxTextInput.min, 10) || parseInt(maxTextInput.value, 10) > parseInt(maxTextInput.max, 10)) {
-                                    maxTextInput.value = maxTextInput.defaultValue;
-                                }
-                                maxTextLength = maxTextInput.value;
+                            widgetStateUpdate[widgetType] = {
+                                globalUpdate: function() { //maybe this is a fundamental function and should be just a widget?
+                                    var textBox = document.getElementById("text_box");
+                                    var excessText = textBox.value.length; // Edge case that there are no spaces
+                                    var maxTextLength;
+                                    var maxTextInput = document.getElementById("max_text");
+                                    if(parseInt(maxTextInput.value, 10) < parseInt(maxTextInput.min, 10) || parseInt(maxTextInput.value, 10) > parseInt(maxTextInput.max, 10)) {
+                                        maxTextInput.value = maxTextInput.defaultValue;
+                                    }
+                                    maxTextLength = maxTextInput.value;
 
-                                if(maxTextLength != 0) {
-                                    var excessTextSpace = textBox.value.lastIndexOf(" ", textBox.value.length - maxTextLength);
-                                    var excessTextNewline = textBox.value.lastIndexOf("\n", textBox.value.length - maxTextLength);
-                                    excessText = excessTextSpace;
-                                    if( excessText < excessTextNewline) {
-                                        excessText = excessTextNewline;
+                                    if(maxTextLength != 0) {
+                                        var excessTextSpace = textBox.value.lastIndexOf(" ", textBox.value.length - maxTextLength);
+                                        var excessTextNewline = textBox.value.lastIndexOf("\n", textBox.value.length - maxTextLength);
+                                        excessText = excessTextSpace;
+                                        if( excessText < excessTextNewline) {
+                                            excessText = excessTextNewline;
+                                        }
+                                    }
+                                    var keepText = textBox.value;
+                                    if(maxTextLength == 0 || (excessText > 0 && document.getElementById("enable_char_limit").checked)) {
+                                        var newText = textBox.value.substring(0, excessText);
+                                        var newWords = newText.split(/[ \n]+/);
+                                        newWords = newWords.filter(function(entry) { return entry != ""; });
+                                        globalState.vars["hidden_word_count"] += newWords.length 
+                                        globalState.vars["hidden_text"] += newText;
+                                        keepText = textBox.value.substring(excessText, textBox.value.length+10);
+                                        textBox.value = keepText;
                                     }
                                 }
-                                var keepText = textBox.value;
-                                if(maxTextLength == 0 || (excessText > 0 && document.getElementById("enable_char_limit").checked)) {
-                                    var newText = textBox.value.substring(0, excessText);
-                                    var newWords = newText.split(/[ \n]+/);
-                                    newWords = newWords.filter(function(entry) { return entry != ""; });
-                                    globalState.vars["hidden_word_count"] += newWords.length 
-                                    globalState.vars["hidden_text"] += newText;
-                                    keepText = textBox.value.substring(excessText, textBox.value.length+10);
-                                    textBox.value = keepText;
-                                }
-                            }
+                            };
                         }
                         break;
                     case "stats":
@@ -211,24 +213,25 @@
                             var heading = document.createElement("p");
                             heading.innerHTML = "<i>Stats</i>:";
                             element.appendChild(heading);
-                            var numChars = document.createElement("p");
-                            numChars.id = "num_chars";
-                            numChars.innerHTML = "Char count: 0";
-                            var numWords = document.createElement("p");
-                            numWords.id = "num_words";
-                            numWords.innerHTML = "Word count: 0";
+
+                            var statsP = document.createElement("p");
+                            statsP.id = "stats_p";
+                            statsP.innerHTML = "Char count: 0<br>Word count: 0";
 
                             element.appendChild(heading);
-                            element.appendChild(numChars);
-                            element.appendChild(numWords);
-                            widgetStateUpdate[widgetType] = function () {
-                                var textBox = document.getElementById("text_box");
-                                var totalChars = globalState.vars["hidden_text"].length + textBox.value.length;
-                                globalState.vars["word_count"] = globalState.vars["hidden_word_count"] + textBox.value.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
-                                var numChars = document.getElementById("num_chars")
-                                numChars.innerHTML = "Char count: " + totalChars;
-                                document.getElementById("num_words").innerHTML = "Word count: " + globalState.vars["word_count"];
-                            }
+                            element.appendChild(statsP);
+                            widgetStateUpdate[widgetType] = {
+                                globalUpdate: function() {
+                                    var textBox = document.getElementById("text_box");
+                                    var totalChars = globalState.vars["hidden_text"].length + textBox.value.length;
+                                    globalState.vars["word_count"] = globalState.vars["hidden_word_count"] + textBox.value.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
+                                    var numChars = document.getElementById("num_chars")
+                                    //numChars.innerHTML = "Char count: " + totalChars;
+                                    var statsP = document.getElementById("stats_p");
+                                    //document.getElementById("num_words").innerHTML = "Word count: " + globalState.vars["word_count"];
+                                    statsP.innerHTML =  "Char count: " + totalChars + "<br>Word count: " + globalState.vars["word_count"];
+                                }
+                            };
                         }
                         break;
                     case "sprint":
@@ -247,20 +250,20 @@
                             sprintParent.innerHTML = "Minutes in sprint: ";
                             sprintParent.appendChild(sprint);
 
-                            var countdown = document.createElement("p");
-                            countdown.id = "countdown";
-                            countdown.innerHTML = "-- X minutes and X seconds to go. --";
+                            var sprintP = document.createElement("p");
+                            sprintP.id = "sprint_p";
+                            sprintP.innerHTML = "-- X minutes and X seconds to go. --";
 
                             globalState.vars["sprint_start_time"] = -1;
-                            function displaySprintTimeToGo() {
+                            function getSprintP() {
                                 var sprintTime = document.getElementById("sprint_time");
-                                var countdown = document.getElementById("countdown");
                                 var timeToGo = sprintTime.value * 60 + globalState.vars["sprint_start_time"] - getTime();
-                                countdown.innerHTML =  "-- " + Math.floor(timeToGo/60) + " minutes and " + (timeToGo%60).toFixed(0) + " seconds to go. --";
+                                return "-- " + Math.floor(timeToGo/60) + " minutes and " + (timeToGo%60).toFixed(0) + " seconds to go. --";
                             }
                             function resetSprintStartTime() {
+                                var sprintP = document.getElementById("sprint_p");
                                 globalState.vars["sprint_start_time"] = getTime();
-                                displaySprintTimeToGo();
+                                sprintP.innerHTML = getSprintP();
                             }
                             var sprintResetButton = document.createElement("BUTTON");
                             sprintResetButton.id = "sprint_reset_button";
@@ -269,20 +272,23 @@
                             sprintParent.appendChild(sprintResetButton);
 
                             element.appendChild(heading);
-                            element.appendChild(countdown);
+                            element.appendChild(sprintP);
                             element.appendChild(sprintParent);
 
-                            widgetStateUpdate[widgetType] = function() {
-                                if(globalState.vars["sprint_start_time"] > 0) {
-                                    var sprintTime = document.getElementById("sprint_time");
-                                    displaySprintTimeToGo();
-                                    if(sprintTime.value * 60 + globalState.vars["sprint_start_time"] <= getTime()) {
-                                        alert("Times up!");
-                                        globalState.vars["sprint_start_time"] = -1;
-                                        countdown.innerHTML = "-- X minutes and X seconds to go. --";
+                            widgetStateUpdate[widgetType] = {
+                                globalUpdate: function() {
+                                    if(globalState.vars["sprint_start_time"] > 0) {
+                                        var sprintTime = document.getElementById("sprint_time");
+                                        var sprintP = document.getElementById("sprint_p");
+                                        sprintP.innerHTML = getSprintP();
+                                        if(sprintTime.value * 60 + globalState.vars["sprint_start_time"] <= getTime()) {
+                                            alert("Times up!");
+                                            globalState.vars["sprint_start_time"] = -1;
+                                            sprintP.innerHTML = "-- X minutes and X seconds to go. --";
+                                        }
                                     }
                                 }
-                            }
+                            };
                         }
                         break;
                     case "wpm":
@@ -294,10 +300,10 @@
 
                             globalState.vars["wpm_offset"] = 0;
                             //wpm stat:
-                            var wpm = document.createElement("p");
-                            wpm.id = "words_per_minute";
-                            wpm.innerHTML = "Words/Minute: 0.0";
-                            wpm.style.visibility = "visible";
+                            var wpmP = document.createElement("p");
+                            wpmP.id = "wpm_p";
+                            wpmP.innerHTML = "Words/Minute: 0.0";
+                            wpmP.style.visibility = "visible";
 
                             //reset wpm:
                             function resetWPMStartTime() {
@@ -308,6 +314,9 @@
                             function computeWordsPerMinute() {
                                 return (globalState.vars["word_count"]-globalState.vars["wpm_offset"])*60.0/( getTime() - globalState.vars["wpm_start_time"]);
                             }
+                            function getWPMP() {
+                                return "Words/Minute: " + computeWordsPerMinute().toFixed(2); 
+                            }
                             var wpmResetButton = document.createElement("BUTTON");
                             wpmResetButton.id = "wpm_reset_button";
                             wpmResetButton.onclick = resetWPMStartTime;
@@ -316,7 +325,7 @@
 
                             //toggle wpm visibility:
                             function toggleWordsPerMinute() {
-                                var wpmElems = ["wpm_reset_button", "words_per_minute"];
+                                var wpmElems = ["wpm_reset_button", "wpm_p"];
                                 for(var i in wpmElems) {
                                     var wpmElem = wpmElems[i];
                                     if (document.getElementById(wpmElem).style.visibility != "visible") {
@@ -334,14 +343,14 @@
                             element.appendChild(heading);
                             element.appendChild(wpmToggleButton);
                             element.appendChild(wpmResetButton);
-                            element.appendChild(wpm);
+                            element.appendChild(wpmP);
 
-                            widgetStateUpdate[widgetType] = function() {
-                                var wpm = document.getElementById("words_per_minute")
-                                if(wpm != null) {
-                                    wpm.innerHTML = "Words/Minute: " + computeWordsPerMinute().toFixed(2);
+                            widgetStateUpdate[widgetType] = {
+                                globalUpdate: function() {
+                                    var wpmP = document.getElementById("wpm_p")
+                                    wpmP.innerHTML = getWPMP();
                                 }
-                            }
+                            };
                         }
                         break;
                     default: //unknown widget:
@@ -461,7 +470,7 @@
             }
             function updateState() {
                 for (key in widgetState) {
-                    widgetState[key]();
+                    widgetState[key].globalUpdate();
                 }
                 if (document.getElementById("auto_save").checked && (getTime() - globalState.vars["last_saved_time"] > 5*60)) {
                     saveState();
