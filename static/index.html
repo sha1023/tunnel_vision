@@ -352,11 +352,11 @@
                                     sprintHistoryP.style.display = "none";
                                 }
                             }
-                            var sprintResetButton = document.createElement("BUTTON");
-                            sprintResetButton.id = "sprint_display_sprint_history";
-                            sprintResetButton.onclick = toggleSprintHistory;
-                            sprintResetButton.innerHTML = "Show/Hide History";
-                            sprintParent.appendChild(sprintResetButton);
+                            var toggleSprintHistoryButton = document.createElement("BUTTON");
+                            toggleSprintHistoryButton.id = "sprint_display_sprint_history";
+                            toggleSprintHistoryButton.onclick = toggleSprintHistory;
+                            toggleSprintHistoryButton.innerHTML = "Show/Hide History";
+                            sprintParent.appendChild(toggleSprintHistoryButton);
 
                             element.appendChild(heading);
                             element.appendChild(sprintP);
