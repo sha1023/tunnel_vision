@@ -11,14 +11,13 @@
         <div style="clear:both; bottom: 5px;">
             <hr>
             <hr>
-            <button onclick="saveLayout()">Save Layout</button>
+            <div>
+            <p id="save_stats" style="float:left">-- Not Saved. --</p>
+            <p style="float:right"><button onclick="saveState()">Save?</button> to browser (<i>ctrl-s</i>)<br><input type="checkbox" id="auto_save" checked> 5 minute auto-save?<br><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
+            </div>
+            <hr style="clear:both">
             <button onclick="toggleLayouts()">Show/Hide URL Layout </button><p id="defaultLayouts" style="display:none"> </p>
-            <hr>
-            <p id="save_stats">-- Not Saved. --</p>
-            <p><button onclick="saveState()">Save?</button> (to browser)</p>
-            <p><input type="checkbox" id="auto_save" checked> 5 minute auto-save?</p>
-            <p><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
-            <button onclick="toDownloadPage()">Download what I wrote.</button>
+            <p><button onclick="toDownloadPage()">Download what I wrote.</button></p>
         </div>
         <script>
             function getTime() {
@@ -91,7 +90,12 @@
                     //alert("Error retrieving text.");
                     return;
                 }
-                setApi(name, {"text_box":text, "notes":notes, "sprint_history": sprintHistory});
+                var saveJSON = {"text_box":text, "notes":notes, "sprint_history": sprintHistory} 
+                var qParams = document.location.search;
+                if(qParams.length != 0) {
+                    saveJSON["layout"] = qParams;
+                }
+                setApi(name, saveJSON);
                 globalState["last_saved_time"] = getTime();
                 document.getElementById("save_stats").innerHTML = "-- Saved " + globalState["word_count"] + " words @ " + getPrettyTime(globalState["last_saved_time"]) + ". --";
             }
@@ -113,12 +117,6 @@
                 }
                 if(state["sprint_history"] != null) {
                     globalState["sprint_history"] = JSON.parse(state["sprint_history"]);
-                }
-            }
-            function saveLayout() {
-                var qParams = document.location.search;
-                if(qParams.length != 0) {
-                    setApi(getProjectName(), {"layout": qParams});
                 }
             }
             function getParameterByName(name, url) {
