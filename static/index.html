@@ -393,10 +393,7 @@
                                     document.getElementById("sprint_p").innerHTML = getDisplay(stateUpdate);
                                     if( stateUpdate["sprint_start_time"] < 0 && (state["sprint_start_time"] >= 0)) {
                                             alert("Times up!");
-                                            var sprintHistory = document.getElementById("sprint_tag").value.trim();
-                                            if(sprintHistory.length != 0) {
-                                                sprintHistory = "<br><i>-- " + sprintHistory + " --</i>";
-                                            }
+                                            var sprintHistory = "<br><i>-- " + document.getElementById("sprint_tag").value.trim() + " --</i>";
                                             sprintHistory += "<br>" + getPrettyTime(getTime()) + " - Duration " + (stateUpdate["sprint_duration"]/60) + " minutes:";
                                             for (var i=0; i<widgetResolutionOrder.length; i++) {
                                                 var widgetKey = widgetResolutionOrder[i];
