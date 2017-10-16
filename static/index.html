@@ -113,7 +113,10 @@
                     document.getElementById("text_box").value = state["text_box"];
                 }
                 if(state["notes"] != null) {
-                    document.getElementById("notes").value = state["notes"];
+                    var notes = document.getElementById("notes");
+                    if(notes != null) {
+                        notes.value = state["notes"];
+                    }
                 }
                 if(state["sprint_history"] != null) {
                     globalState["sprint_history"] = JSON.parse(state["sprint_history"]);
