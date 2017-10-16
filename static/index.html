@@ -358,12 +358,12 @@
                             var toggleSprintHistoryButton = document.createElement("BUTTON");
                             toggleSprintHistoryButton.id = "sprint_display_sprint_history";
                             toggleSprintHistoryButton.onclick = toggleSprintHistory;
-                            toggleSprintHistoryButton.innerHTML = "Show/Hide History";
-                            sprintParent.appendChild(toggleSprintHistoryButton);
+                            toggleSprintHistoryButton.innerHTML = "Show/Hide Sprint History";
 
                             element.appendChild(heading);
                             element.appendChild(sprintP);
                             element.appendChild(sprintParent);
+                            element.appendChild(toggleSprintHistoryButton);
                             element.appendChild(sprintHistoryP);
                             function getNewState(oldState) {
                                 var newState = {};
