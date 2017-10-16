@@ -167,16 +167,18 @@
                             maxText.max = "5000"
                             maxText.placeholder = "150";
                             maxText.defaultValue = "150";
-                            var maxTextParent = document.createElement("p");
-                            maxTextParent.innerHTML = "Scroll limit (20-5000 chars) ";
-                            maxTextParent.appendChild(maxText);
+
                             var enableCharLimit = document.createElement("input");
                             enableCharLimit.type = "checkbox";
                             enableCharLimit.id = "enable_char_limit";
                             enableCharLimit.checked = false;
-                            var enableCharLimitParent = document.createElement("p");
-                            enableCharLimitParent.innerHTML = "Enable scroll limit?";
-                            enableCharLimitParent.appendChild(enableCharLimit);
+
+                            var scrollControls = document.createElement("p");
+                            scrollControls.appendChild(document.createTextNode("Enable scroll limit? "));
+                            scrollControls.appendChild(enableCharLimit);
+                            scrollControls.append(document.createElement("br"));
+                            scrollControls.appendChild(document.createTextNode(" Scroll limit (20-5000 chars): "));
+                            scrollControls.appendChild(maxText);
 
                             var tunnel = document.createElement("TEXTAREA");
                             tunnel.id = "text_box";
@@ -184,8 +186,7 @@
                             tunnel.cols = "50";
                             element.appendChild(heading);
                             element.appendChild(tunnel);
-                            element.appendChild(enableCharLimitParent);
-                            element.appendChild(maxTextParent);
+                            element.appendChild(scrollControls);
                             function getNewState(oldState) {
                                 var newState = {};
                                 var textBox = document.getElementById("text_box");
@@ -295,9 +296,6 @@
                             sprint.min = "1";
                             sprint.placeholder = "15";
                             sprint.defaultValue = "15";
-                            var sprintParent = document.createElement("p");
-                            sprintParent.innerHTML = "Minutes in sprint: ";
-                            sprintParent.appendChild(sprint);
 
                             var sprintP = document.createElement("p");
                             sprintP.id = "sprint_p";
@@ -337,7 +335,6 @@
                             sprintResetButton.id = "sprint_reset_button";
                             sprintResetButton.onclick = resetSprintStartTime;
                             sprintResetButton.innerHTML = "Start Sprint";
-                            sprintParent.appendChild(sprintResetButton);
 
                             function updateSprintHistory(state){
                                 var sprintHistoryP = document.getElementById("sprint_history_p");
@@ -365,11 +362,20 @@
                             sprintTag.placeholder = "sprint tag";
                             sprintTag.defaultValue = "";
 
+                            var sprintControls = document.createElement("p");
+                            sprintControls.appendChild(document.createTextNode("Minutes in sprint: "));
+                            sprintControls.appendChild(sprint);
+                            sprintControls.appendChild(document.createTextNode(" "));
+                            sprintControls.appendChild(sprintResetButton);
+                            sprintControls.appendChild(document.createElement("br"));
+                            sprintControls.appendChild(toggleSprintHistoryButton);
+                            sprintControls.appendChild(document.createTextNode(" "));
+                            sprintControls.appendChild(sprintTag);
+
+
                             element.appendChild(heading);
                             element.appendChild(sprintP);
-                            element.appendChild(sprintParent);
-                            element.appendChild(toggleSprintHistoryButton);
-                            element.appendChild(sprintTag);
+                            element.appendChild(sprintControls);
                             element.appendChild(sprintHistoryP);
                             function getNewState(oldState) {
                                 var newState = {};
