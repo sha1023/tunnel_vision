@@ -131,9 +131,9 @@
                 if (!results[2]) return '';
                 return decodeURIComponent(results[2].replace(/\+/g, " "));
             }
-            function createWidgetDiv(locKey, widgetType) {
+            function createWidgetDiv(widgetType) {
                 if( widgetType == null ) {
-                    return;
+                    return [widgetStateUpdate, null];
                 }
                 var element = document.createElement("DIV");
                 var widgetStateUpdate = {};
@@ -147,7 +147,6 @@
                             notes.id = "notes";
                             notes.rows = "2";
                             notes.cols = "50";
-                            notes.style.visibility = "visible";
                             var heading = document.createElement("p");
                             heading.innerHTML = "<i>Notes</i>:";
                             element.appendChild(heading);
@@ -503,21 +502,10 @@
                         }
                         break;
                     default: //unknown widget:
-                        return {};
+                        element = null;
                 }
 
-                //try to create DIV if the widget creation was successful:
-                switch(locKey[0]) {
-                    case "R":
-                        document.getElementById("right_divs").appendChild(element);
-                        break;
-                    case "L":
-                        document.getElementById("left_divs").appendChild(element);
-                        break;
-                    default: //unknown location
-                        return {};
-                }
-                return widgetStateUpdate;
+                return [widgetStateUpdate, element];
             }
             function getDefaultParams(useUserDefinedDefault) {
                 var defaultLayout = "?L=tunnel,stats,wpm&R=notes,sprint";
@@ -596,8 +584,37 @@
                     window.location.replace(url);
                 }
 
+                var mandatoryWidgets = {};
+                for(var i=0; i<widgetResolutionOrder.length; i++) {
+                    mandatoryWidgets[widgetResolutionOrder[i]] = "";
+                }
                 //Check for location parameters:
                 var divLocs = ["L", "R"];
+                function initializeDiv(paramKey, value) {
+                    var retArr = createWidgetDiv(value);
+                    var widgetStateUpdate = retArr[0];
+                    var div = retArr[1];
+                    if(div == null || div == undefined){
+                        return 
+                    }
+                    for(var key in widgetStateUpdate) {
+                        widgetState[key] = widgetStateUpdate[key];
+                    }
+                    //try to create DIV if the widget creation was successful:
+                    switch(paramKey) {
+                        case "R":
+                            document.getElementById("right_divs").appendChild(div);
+                            break;
+                        case "L":
+                            document.getElementById("left_divs").appendChild(div);
+                            break;
+                        default: //unknown location
+                            //hide the div but do the calculation anyway.
+                            div.style.display = "none";
+                            document.getElementById("left_divs").appendChild(div);
+                            break;
+                    }
+                }
                 for(var i = 0; i < divLocs.length; i++) {
                     var paramKey = divLocs[i];
                     var valuesString = getParameterByName(paramKey, url);
@@ -609,11 +626,12 @@
                     document.getElementById(paramKey).innerHTML = "<b>" + paramKey + " = " + valuesString + "</b>";
                     for(var j=0;j<values.length;j++) {
                         var value = values[j];
-                        var widgetStateUpdate = createWidgetDiv(paramKey, value);
-                        for(var key in widgetStateUpdate) {
-                            widgetState[key] = widgetStateUpdate[key];
-                        }
+                        delete mandatoryWidgets[value];
+                        initializeDiv(paramKey, value);
                     }
+                }
+                for(var manKey in mandatoryWidgets){
+                    initializeDiv(null, manKey);
                 }
                 return widgetState;
             }
