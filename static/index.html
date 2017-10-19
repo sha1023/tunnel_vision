@@ -404,6 +404,7 @@
                                 newState["sprint_start_time"] = oldState["sprint_start_time"];
                                 newState["sprint_duration"] = oldState["sprint_duration"];
                                 newState["sprint_history"] = oldState["sprint_history"];
+                                newState["sprint_display_size"] = oldState["sprint_display_size"];
                                 if(oldState["sprint_start_time"] > 0) {
                                     if(oldState["sprint_duration"] + oldState["sprint_start_time"] <= getTime()) {
                                         newState["sprint_start_time"] = -1;
