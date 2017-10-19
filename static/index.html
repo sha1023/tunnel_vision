@@ -63,10 +63,8 @@
                     localStorage.setItem(name + keyDelim + key, jsonToBeSaved[key]);
                 }
             }
-            function saveState(name) {
-                if(name == null) {
-                    name = getProjectName();
-                }
+            function saveState() {
+                var name = getProjectName();
                 var textBoxElement = document.getElementById("text_box");
                 var text = "";
                 if(textBoxElement != null){
@@ -526,6 +524,30 @@
                             };
                         }
                         break;
+                    case "save":
+                        var saveButton = document.getElementById("save_button");
+                        if(saveButton == null) {
+                            var heading = document.createElement("p");
+                            heading.innerHTML = "<i>Save</i>:";
+
+                            saveButton = document.createElement("BUTTON");
+                            saveButton.id = "save_button";
+                            saveButton.onclick = saveState;
+                            saveButton.innerHTML = "Save?";
+
+                            element.appendChild(heading);
+                            element.appendChild(saveButton);
+
+                            widgetStateUpdate[widgetType] = {
+                                getStartTags: function(state) {return {};},
+                                getNewState: function(state) {return {};},
+                                getDisplay: function(state) {return "";},
+                                performUpdate: function(state) {
+                                    return {};
+                                }
+                            };
+                        }
+                        break;
                     default: //unknown widget:
                         element = null;
                 }
@@ -682,7 +704,7 @@
                 document.close();
             }
             //This is questionable... seems fragile:
-            var widgetResolutionOrder = ["tunnel", "stats", "wpm", "notes", "sprint"];
+            var widgetResolutionOrder = ["tunnel", "stats", "wpm", "notes", "sprint", "save"];
             var globalState = {
                 hidden_text: "",
                 hidden_word_count: 0,
