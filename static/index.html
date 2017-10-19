@@ -308,6 +308,7 @@
 
                             globalState["sprint_start_time"] = -1;
                             globalState["sprint_history"] = [];
+                            globalState["sprint_display_size"] = "none";
                             function getDisplay(state) {
 
                                 if(state["sprint_start_time"] >= 0 && (state["sprint_duration"] + state["sprint_start_time"] > getTime())) {
@@ -336,16 +337,37 @@
                             sprintResetButton.innerHTML = "Start Sprint";
 
                             function updateSprintHistory(state){
+                                var sprintDisplaySize = state["sprint_history"].length;
+                                if(state["sprint_display_size"] == "single" && sprintDisplaySize > 1) {
+                                    sprintDisplaySize = 1;
+                                }
                                 var sprintHistoryP = document.getElementById("sprint_history_p");
                                 sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
-                                for(var i=0;i<state["sprint_history"].length; i++) {
+                                for(var i=0; i<sprintDisplaySize; i++) {
                                     sprintHistoryP.innerHTML += "<br>" + state["sprint_history"][i];
                                 }
                             }
-                            function toggleSprintHistory() {
+                            function cycleSprintHistory() {
                                 var sprintHistoryP = document.getElementById("sprint_history_p");
+                                var sprintDisplaySize = globalState["sprint_display_size"];
+                                switch(globalState["sprint_display_size"]) {
+                                    case "none":
+                                        sprintDisplaySize = "all";
+                                        break;
+                                    case "all":
+                                        sprintDisplaySize = "single";
+                                        break;
+                                    case "single":
+                                        sprintDisplaySize = "none";
+                                        break;
+                                    default:
+                                        sprintDisplaySize = "none";
+                                        break;
+                                }
+                                globalState["sprint_display_size"] = sprintDisplaySize;
                                 updateSprintHistory(globalState);
-                                if(sprintHistoryP.style.display == "none") {
+
+                                if(globalState["sprint_display_size"] == "none") {
                                     sprintHistoryP.style.display = "block";
                                 } else {
                                     sprintHistoryP.style.display = "none";
@@ -353,7 +375,7 @@
                             }
                             var toggleSprintHistoryButton = document.createElement("BUTTON");
                             toggleSprintHistoryButton.id = "sprint_display_sprint_history";
-                            toggleSprintHistoryButton.onclick = toggleSprintHistory;
+                            toggleSprintHistoryButton.onclick = cycleSprintHistory;
                             toggleSprintHistoryButton.innerHTML = "Show/Hide Sprint History";
 
                             var sprintTag = document.createElement("input");
