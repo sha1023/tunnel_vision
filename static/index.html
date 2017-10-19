@@ -13,7 +13,7 @@
             <hr>
             <div>
             <p id="save_stats" style="float:left">-- Not Saved. --</p>
-            <p style="float:right"><button onclick="saveState()">Save?</button> to browser (<i>ctrl-s</i>)<br><input type="checkbox" id="auto_save" checked> 5 minute auto-save?<br><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
+            <p style="float:right"><button onclick="saveState()">Save?</button> to browser (<i>ctrl-s</i>)<br><input type="checkbox" id="auto_save" checked> 1 minute auto-save?<br><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
             </div>
             <hr style="clear:both">
             <button onclick="toggleLayouts()">Show/Hide URL Layout </button><p id="defaultLayouts" style="display:none"> </p>
@@ -241,7 +241,7 @@
 
                             var statsP = document.createElement("p");
                             statsP.id = "stats_p";
-                            statsP.innerHTML = "Char count: 0<br>Word count: 0";
+                            statsP.innerHTML = "Word count: 0";
 
                             element.appendChild(heading);
                             element.appendChild(statsP);
@@ -263,7 +263,7 @@
                                     charCountOffset = state["char_count_offset"];
                                 }
 
-                                return "Char count: " + (state["char_count"] - charCountOffset) + "<br>Word count: " + (state["word_count"] - wordCountOffset);
+                                return "Word count: " + (state["word_count"] - wordCountOffset);
                             }
                             function getStartTags(state) {
                                 var textBox = document.getElementById("text_box");
@@ -357,8 +357,8 @@
                             toggleSprintHistoryButton.innerHTML = "Show/Hide Sprint History";
 
                             var sprintTag = document.createElement("input");
-                            sprintTag.id = "sprint_tag";
-                            sprintTag.placeholder = "sprint tag";
+                            sprintTag.id = "sprint_name";
+                            sprintTag.placeholder = "insert your sprint name";
                             sprintTag.defaultValue = "";
 
                             var sprintControls = document.createElement("p");
@@ -397,7 +397,7 @@
                                     var stateUpdate = getNewState(state);
                                     document.getElementById("sprint_p").innerHTML = getDisplay(stateUpdate);
                                     if( stateUpdate["sprint_start_time"] < 0 && (state["sprint_start_time"] >= 0)) {
-                                            var sprintHistory = "<br><i>-- " + document.getElementById("sprint_tag").value.trim() + " --</i>";
+                                            var sprintHistory = "<br><i>-- " + document.getElementById("sprint_name").value.trim() + " --</i>";
                                             sprintHistory += "<br>" + getPrettyTime(getTime()) + " - " + (stateUpdate["sprint_duration"]/60) + " minutes:";
                                             for (var i=0; i<widgetResolutionOrder.length; i++) {
                                                 var widgetKey = widgetResolutionOrder[i];
@@ -645,7 +645,7 @@
                         }
                     }
                 }
-                if (document.getElementById("auto_save").checked && (getTime() - globalState["last_saved_time"] > 5*60)) {
+                if (document.getElementById("auto_save").checked && (getTime() - globalState["last_saved_time"] > 60)) {
                     saveState();
                 }
             }
