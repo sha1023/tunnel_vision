@@ -341,7 +341,7 @@
                                 sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
                                 var sprintDisplayMin = 0;
                                 var sprintDisplayMax = state["sprint_history"].length;
-                                if(state["sprint_display_size"] == "single" && sprintDisplaySize > 1) {
+                                if(state["sprint_display_size"] == "single" && sprintDisplayMax > 1) {
                                     sprintDisplayMin = sprintDisplayMax - 1;
                                 }
                                 for(var i=sprintDisplayMin; i<sprintDisplayMax; i++) {
