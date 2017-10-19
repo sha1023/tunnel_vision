@@ -337,13 +337,14 @@
                             sprintResetButton.innerHTML = "Start Sprint";
 
                             function updateSprintHistory(state){
-                                var sprintDisplaySize = state["sprint_history"].length;
-                                if(state["sprint_display_size"] == "single" && sprintDisplaySize > 1) {
-                                    sprintDisplaySize = 1;
-                                }
                                 var sprintHistoryP = document.getElementById("sprint_history_p");
                                 sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
-                                for(var i=0; i<sprintDisplaySize; i++) {
+                                var sprintDisplayMin = 0;
+                                var sprintDisplayMax = state["sprint_history"].length;
+                                if(state["sprint_display_size"] == "single" && sprintDisplaySize > 1) {
+                                    sprintDisplayMin = sprintDisplayMax - 1;
+                                }
+                                for(var i=sprintDisplayMin; i<sprintDisplayMax; i++) {
                                     sprintHistoryP.innerHTML += "<br>" + state["sprint_history"][i];
                                 }
                             }
@@ -368,9 +369,9 @@
                                 updateSprintHistory(globalState);
 
                                 if(globalState["sprint_display_size"] == "none") {
-                                    sprintHistoryP.style.display = "block";
-                                } else {
                                     sprintHistoryP.style.display = "none";
+                                } else {
+                                    sprintHistoryP.style.display = "block";
                                 }
                             }
                             var toggleSprintHistoryButton = document.createElement("BUTTON");
