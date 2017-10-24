@@ -6,6 +6,7 @@
         <p style="text-align:center;"><i>I do not like work even when someone else does it.</i> -- Mark Twain</p>
         <hr>
         <hr>
+        <div id="center_divs" align="center" style="border-size:1px;"><p id="C" style="display:none">C = </p></div>
         <div id="left_divs" style="float:left;border-size:1px;"><p id="L" style="display:none">L = </p></div>
         <div id="right_divs" style="float:right;border-size:1px;"><p id="R" style="display:none">R = </p></div>
         <div style="clear:both; bottom: 5px;">
@@ -612,10 +613,12 @@
                 }
                 if(defaultLayouts.style.display == "none") {
                     defaultLayouts.style.display = "block";
+                    document.getElementById("C").style.display = "block";
                     document.getElementById("L").style.display = "block";
                     document.getElementById("R").style.display = "block";
                 } else {
                     defaultLayouts.style.display = "none";
+                    document.getElementById("C").style.display = "none";
                     document.getElementById("L").style.display = "none";
                     document.getElementById("R").style.display = "none";
                 }
@@ -636,7 +639,7 @@
                     mandatoryWidgets[widgetResolutionOrder[i]] = "";
                 }
                 //Check for location parameters:
-                var divLocs = ["L", "R"];
+                var divLocs = ["C", "L", "R"];
                 function initializeDiv(paramKey, value) {
                     var retArr = createWidgetDiv(value);
                     var widgetStateUpdate = retArr[0];
@@ -649,6 +652,9 @@
                     }
                     //try to create DIV if the widget creation was successful:
                     switch(paramKey) {
+                        case "C":
+                            document.getElementById("center_divs").appendChild(div);
+                            break;
                         case "R":
                             document.getElementById("right_divs").appendChild(div);
                             break;
