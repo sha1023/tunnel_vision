@@ -6,9 +6,9 @@
         <p style="text-align:center;"><i>I do not like work even when someone else does it.</i> -- Mark Twain</p>
         <hr>
         <hr>
-        <div id="center_divs" align="center" style="border-size:1px;"><p id="C" style="display:none">C = </p></div>
-        <div id="left_divs" style="float:left;border-size:1px;"><p id="L" style="display:none">L = </p></div>
-        <div id="right_divs" style="float:right;border-size:1px;"><p id="R" style="display:none">R = </p></div>
+        <div id="center_divs" align="center" style="border-size:1px;"><p class="url_layouts" id="C" style="display:none">C = </p></div>
+        <div id="left_divs" style="float:left;border-size:1px;"><p class="url_layouts" id="L" style="display:none">L = </p></div>
+        <div id="right_divs" style="float:right;border-size:1px;"><p class="url_layouts" id="R" style="display:none">R = </p></div>
         <div style="clear:both; bottom: 5px;">
             <hr>
             <hr>
@@ -17,7 +17,7 @@
             <p style="float:right"><button onclick="saveState()">Save?</button> to browser (<i>ctrl-s</i>)<br><input type="checkbox" id="auto_save" checked> 1 minute auto-save?<br><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
             </div>
             <hr style="clear:both">
-            <button onclick="toggleLayouts()">Show/Hide URL Layout </button><p id="defaultLayouts" style="display:none"> </p>
+            <button onclick="toggleLayouts()">Show/Hide URL Layout </button><p class="url_layouts" id="default_layouts" style="display:none"> </p>
             <p><button onclick="toDownloadPage()">Download what I wrote.</button></p>
         </div>
         <script>
@@ -604,7 +604,7 @@
                 return paramStr
             }
             function toggleLayouts() {
-                var defaultLayouts = document.getElementById("defaultLayouts");
+                var defaultLayouts = document.getElementById("default_layouts");
                 if(defaultLayouts.innerHTML.trim() == "") {
                     var origParams = getDefaultParams(false);
                     var userParams = getDefaultParams(true);
@@ -612,15 +612,15 @@
                     defaultLayouts.innerHTML = "Adjust url parameters to change layout:<br><b>Suggested:</b> <a href=\"" + origParams +"\">" + origParams + "</a><br><b>Saved:</b> <a href=\"" + userParams +"\">" + userParams +"</a><br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
                 }
                 if(defaultLayouts.style.display == "none") {
-                    defaultLayouts.style.display = "block";
-                    document.getElementById("C").style.display = "block";
-                    document.getElementById("L").style.display = "block";
-                    document.getElementById("R").style.display = "block";
+                    urlLayouts = document.getElementsByClassName("url_layouts")
+                    for(var i=0; i<urlLayouts.length;i++){
+                        urlLayouts[i].style.display = "block";
+                    }
                 } else {
-                    defaultLayouts.style.display = "none";
-                    document.getElementById("C").style.display = "none";
-                    document.getElementById("L").style.display = "none";
-                    document.getElementById("R").style.display = "none";
+                    urlLayouts = document.getElementsByClassName("url_layouts")
+                    for(var i=0; i<urlLayouts.length;i++){
+                        urlLayouts[i].style.display = "none";
+                    }
                 }
             }
             function setupDivsFromURL() {
@@ -664,7 +664,7 @@
                         default: //unknown location
                             //hide the div but do the calculation anyway.
                             div.style.display = "none";
-                            document.getElementById("left_divs").appendChild(div);
+                            document.getElementById("center_divs").appendChild(div);
                             break;
                     }
                 }
