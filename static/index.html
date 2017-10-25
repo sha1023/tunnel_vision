@@ -608,8 +608,10 @@
                 if(defaultLayouts.innerHTML.trim() == "") {
                     var origParams = getDefaultParams(false);
                     var centerParams = "?C=tunnel,sprint";
+                    var justTunnelParams = "?C=tunnel";
+                    var rightAlignedNotesParams = "?L=notes,tunnel,save&R=sprint,stats,wpm";
                     var randParams = getRandomParams();
-                    defaultLayouts.innerHTML = "Adjust url parameters to change layout:<br><b>Suggested:</b> <a href=\"" + origParams +"\">" + origParams + "</a><br><b>Minimal:</b> <a href=\"" + centerParams +"\">" + centerParams +"</a><br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
+                    defaultLayouts.innerHTML = "Adjust url parameters to change layout:<br><b>Suggested:</b> <a href=\"" + origParams +"\">" + origParams + "</a><br><b>Minimal:</b> <a href=\"" + centerParams +"\">" + centerParams + "</a><br><b>Zero Frills:</b> <a href=\"" + justTunnelParams +"\">" + justTunnelParams + "</a><br><b>Notes First:</b> <a href=\"" + rightAlignedNotesParams +"\">" + rightAlignedNotesParams + "</a><br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
                 }
                 if(defaultLayouts.style.display == "none") {
                     urlLayouts = document.getElementsByClassName("url_layouts")
