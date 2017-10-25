@@ -17,7 +17,7 @@
             <p style="float:right"><button onclick="saveState()">Save?</button> to browser (<i>ctrl-s</i>)<br><input type="checkbox" id="auto_save" checked> 1 minute auto-save?<br><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
             </div>
             <hr style="clear:both">
-            <button onclick="toggleLayouts()">Show/Hide URL Layout </button><p class="url_layouts" id="default_layouts" style="display:none"> </p>
+            <button onclick="toggleLayouts()">Layout Options</button><p class="url_layouts" id="default_layouts" style="display:none"> </p>
             <p><button onclick="toDownloadPage()">Download what I wrote.</button></p>
         </div>
         <script>
@@ -556,7 +556,7 @@
                 return [widgetStateUpdate, element];
             }
             function getDefaultParams(useUserDefinedDefault) {
-                var defaultLayout = "?L=tunnel,stats,wpm&R=notes,sprint";
+                var defaultLayout = "?L=tunnel,save&R=notes,sprint,stats,wpm";
                 if(useUserDefinedDefault) {
                     var userDefinedLayout = getApi(getProjectName(), ["layout"]);
                     if(userDefinedLayout["layout"] != null) {
@@ -607,9 +607,9 @@
                 var defaultLayouts = document.getElementById("default_layouts");
                 if(defaultLayouts.innerHTML.trim() == "") {
                     var origParams = getDefaultParams(false);
-                    var userParams = getDefaultParams(true);
+                    var centerParams = "?C=tunnel,sprint";
                     var randParams = getRandomParams();
-                    defaultLayouts.innerHTML = "Adjust url parameters to change layout:<br><b>Suggested:</b> <a href=\"" + origParams +"\">" + origParams + "</a><br><b>Saved:</b> <a href=\"" + userParams +"\">" + userParams +"</a><br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
+                    defaultLayouts.innerHTML = "Adjust url parameters to change layout:<br><b>Suggested:</b> <a href=\"" + origParams +"\">" + origParams + "</a><br><b>Minimal:</b> <a href=\"" + centerParams +"\">" + centerParams +"</a><br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
                 }
                 if(defaultLayouts.style.display == "none") {
                     urlLayouts = document.getElementsByClassName("url_layouts")
