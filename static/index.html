@@ -18,6 +18,50 @@
             </div>
             <hr style="clear:both">
             <button onclick="toggleLayouts()">Layout Options</button><p class="url_layouts" id="default_layouts" style="display:none"> </p>
+            <p><button onclick="toggleAbout()">Instructions</button></p>
+            <pre id="about_text" style="display:none">
+Tunnel-vision prevents overediting by limiting how much of your
+previous work you can see.
+
+Tunnel-vision provides a variety of features to achieve your
+productivity goals. Real time word counts and words/minute stats
+prevent you from getting distracted in the moment. Timed sprints
+enhance your focus for longer time periods. Stats for the sprints
+allow you gauge the progress you make between sessions.
+
+***
+
+Instructions:
+To limit what you can see, you can physically resize your input window
+with the mouse. If that is not sufficient to curb the temptation to
+edit, you can enable the scroll limit to hide what you already wrote.
+
+Sprint durations can be set in minutes, and labeled with a sprint
+name. Upon pressing the "<i>Start Sprint</i>" button your time remaining will
+count down. Your stats for (up to) the last 15 sprints are saved.
+Pressing the "<i>Show (None/All/Last) Sprint</i>" button cycles through the
+listed display options.
+
+You can periodically save your work to the browser. By default this
+happens automatically every minute. Reloading can be done via the
+"<i>Reload...</i>" button.
+
+<b>*A word about saving...*</b>
+As of now, your work is <b>*not*</b> backed up to the cloud. Everything saved
+is local to your web browser. This is meant primarily to prevent
+losing data if you accidentally close your browser window or navigate
+away from the page. You should <b>*always*</b> download what you wrote when
+you are done with a session. Tunnel-vision does not guarantee that
+your work will be preserved if you do not. Your work will not be
+available via this website on other computers, and opening two
+tunnel-vision windows in the same browser may result in inconsistent
+saved states.
+
+When you are done writing click on the "<i>Download what I wrote.</i>" button
+and either copy the displayed text, or download the generated text
+file.
+
+Happy Writing!</pre>
             <p><button onclick="toDownloadPage()">Download what I wrote.</button></p>
         </div>
         <script>
@@ -602,6 +646,14 @@
                     paramStr += "R=" + rWidgets.join(",");
                 }
                 return paramStr
+            }
+            function toggleAbout() {
+                var aboutText = document.getElementById("about_text");
+                if(aboutText.style.display == "none") {
+                    aboutText.style.display ="block";
+                } else {
+                    aboutText.style.display ="none";
+                }
             }
             function toggleLayouts() {
                 var defaultLayouts = document.getElementById("default_layouts");
