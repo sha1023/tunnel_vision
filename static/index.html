@@ -174,23 +174,23 @@ Happy Writing!</pre>
                 if (!results[2]) return '';
                 return decodeURIComponent(results[2].replace(/\+/g, " "));
             }
-            function insertParam(key, value, url)
+            function replaceParam(key, value, query)
             {
-                //key = encodeURI(key); value = encodeURI(value);
-                var kvp = url.substr(1).split('&');
-                var i=kvp.length; var x; while(i--)
-                {
-                    x = kvp[i].split('=');
-                    if (x[0]==key)
-                    {
-                        x[1] = value;
-                        kvp[i] = x.join('=');
-                        break;
+                 //key = encodeURI(key); value = encodeURI(value);
+                if(query.startsWith("?")) {
+                    query = query.substr(1)
+                }
+                var keyValuePairs = query.split('&');
+                var newKeyValuePairs = [];
+                var found = false;
+                for(var i=0; i<keyValuePairs.length; i++) {
+                    var keyValuePair = keyValuePairs[i].split('=');
+                    if (keyValuePair[0] != key) {
+                        newKeyValuePairs.push(keyValuePairs[i]);
                     }
                 }
-                if(i<0) {kvp[kvp.length] = [key,value].join('=');}
-                url = "?" + kvp.join('&');
-                return url;
+                newKeyValuePairs.push(key + "=" + value);
+                return "?" + newKeyValuePairs.join('&');
             }
             function createWidgetDiv(widgetType) {
                 if( widgetType == null ) {
@@ -635,7 +635,7 @@ Happy Writing!</pre>
                 return getParameterByName("wai") == getWai();
             }
             function replaceWai(url) {
-                return insertParam("wai", getWai(), url);
+                return replaceParam("wai", getWai(), url);
             }
             function getDefaultParams(useUserDefinedDefault) {
                 var defaultLayout = "?L=tunnel,save&R=notes,sprint,stats,wpm";
