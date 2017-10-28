@@ -134,7 +134,7 @@ Happy Writing!</pre>
                     return;
                 }
                 var saveJSON = {"text_box":text, "notes":notes, "sprint_history": sprintHistory} 
-                var qParams = document.location.search;
+                var qParams = window.location.search;
                 if(qParams.length != 0) {
                     saveJSON["layout"] = qParams;
                 }
@@ -631,8 +631,8 @@ Happy Writing!</pre>
                 }
                 return wai;
             }
-            function verifyWai() {
-                return getParameterByName("wai") == getWai();
+            function verifyWai(url) {
+                return getParameterByName("wai", url) == getWai();
             }
             function replaceWai(url) {
                 return replaceParam("wai", getWai(), url);
@@ -720,13 +720,13 @@ Happy Writing!</pre>
                 var url = window.location.href;
 
                 //redirect if no params are given:
-                if(!document.location.search.length) {
+                if(!window.location.search.length) {
                     //default to :
                     url += replaceWai(getDefaultParams(true));
                     window.location.replace(url);
                 }
                 if(!verifyWai(url)) {
-                    url = url.substring(0, url.length - document.location.search.length) + replaceWai(document.location.search);
+                    url = url.substring(0, url.length - window.location.search.length) + replaceWai(window.location.search);
                     window.location.replace(url);
                 }
 
