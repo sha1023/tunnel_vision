@@ -638,7 +638,7 @@ Happy Writing!</pre>
                 return replaceParam("wai", getWai(), url);
             }
             function getDefaultParams(useUserDefinedDefault) {
-                var defaultLayout = "?L=tunnel,save&R=notes,sprint,stats,wpm";
+                var defaultLayout = "?C=tunnel,sprint,wpm";
                 if(useUserDefinedDefault) {
                     var userDefinedLayout = getApi(getProjectName(), ["layout"]);
                     if(userDefinedLayout["layout"] != null) {
@@ -696,12 +696,12 @@ Happy Writing!</pre>
             function toggleLayouts() {
                 var defaultLayouts = document.getElementById("default_layouts");
                 if(defaultLayouts.innerHTML.trim() == "") {
-                    var origParams = replaceWai(getDefaultParams(false));
-                    var centerParams = replaceWai("?C=tunnel,sprint");
+                    var defaultParams = replaceWai(getDefaultParams(false));
+                    var moreWidgetsParams = replaceWai("?L=tunnel,save&R=sprint,stats,wpm");
                     var justTunnelParams = replaceWai("?C=tunnel");
-                    var rightAlignedNotesParams = replaceWai("?L=notes,tunnel,save&R=sprint,stats,wpm");
+                    var notesParams = replaceWai("?L=tunnel,save&R=notes,sprint,stats,wpm");
                     var randParams = replaceWai(getRandomParams());
-                    defaultLayouts.innerHTML = "Adjust url parameters to change layout:<br><b>Suggested:</b> <a href=\"" + origParams +"\">" + origParams + "</a><br><b>Minimal:</b> <a href=\"" + centerParams +"\">" + centerParams + "</a><br><b>Zero Frills:</b> <a href=\"" + justTunnelParams +"\">" + justTunnelParams + "</a><br><b>Notes First:</b> <a href=\"" + rightAlignedNotesParams +"\">" + rightAlignedNotesParams + "</a><br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
+                    defaultLayouts.innerHTML = "Adjust url parameters to change layout:<br><b>Minimal:</b> <a href=\"" + defaultParams +"\">" + defaultParams + "</a><br><b>More Widgets:</b> <a href=\"" + moreWidgetsParams +"\">" + moreWidgetsParams + "</a><br><b>No Frills:</b> <a href=\"" + justTunnelParams +"\">" + justTunnelParams + "</a><br><b>Notes & Widgets:</b> <a href=\"" + notesParams +"\">" + notesParams + "</a><br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
                 }
                 if(defaultLayouts.style.display == "none") {
                     urlLayouts = document.getElementsByClassName("url_layouts")
