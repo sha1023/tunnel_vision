@@ -364,12 +364,12 @@ Happy Writing!</pre>
 
                             var sprintHistoryP = document.createElement("p");
                             sprintHistoryP.id = "sprint_history_p";
-                            sprintHistoryP.innerHTML = "";
-                            sprintHistoryP.style.display = "none";
+                            sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
+                            sprintHistoryP.style.display = "block";
 
                             globalState["sprint_start_time"] = -1;
                             globalState["sprint_history"] = [];
-                            globalState["sprint_display_size"] = "none";
+                            globalState["sprint_display_size"] = "single";
                             function getDisplay(state) {
 
                                 if(state["sprint_start_time"] >= 0 && (state["sprint_duration"] + state["sprint_start_time"] > getTime())) {
@@ -460,6 +460,7 @@ Happy Writing!</pre>
                             element.appendChild(sprintP);
                             element.appendChild(sprintControls);
                             element.appendChild(sprintHistoryP);
+
                             function getNewState(oldState) {
                                 var newState = {};
                                 newState["sprint_start_time"] = oldState["sprint_start_time"];
