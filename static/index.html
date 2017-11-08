@@ -65,6 +65,15 @@ Happy Writing!</pre>
             <p><button onclick="toDownloadPage()">Download what I wrote.</button></p>
         </div>
         <script>
+            function mergeObjects(...jsons) {
+                mergedJson = {};
+                for(var i in jsons) {
+                    for(var key in jsons[i]) {
+                        mergedJson[key] = jsons[i][key];
+                    }
+                }
+                return mergedJson;
+            }
             function getTime() {
                 return new Date().getTime() / 1000;
             }
@@ -277,6 +286,7 @@ Happy Writing!</pre>
                             widgetStateUpdate[widgetType] = {
                                 getStartTags: function(){return {};},
                                 getNewState: getNewState,
+                                getDisplayData: function(state) {return {};},
                                 getDisplay: getDisplay,
                                 performUpdate: function(state) { //maybe this is a fundamental function and should be just a widget?
                                     var textBox = document.getElementById("text_box");
@@ -314,7 +324,7 @@ Happy Writing!</pre>
                                 newState["char_count"] = oldState["hidden_text"].length + textBox.value.length;
                                 return newState;
                             }
-                            function getDisplay(state) {
+                            function getDisplayData(state) {
                                 var wordCountOffset = 0;
                                 var charCountOffset = 0;
                                 if("word_count_offset" in state) {
@@ -324,7 +334,13 @@ Happy Writing!</pre>
                                     charCountOffset = state["char_count_offset"];
                                 }
 
-                                return "Word count: " + (state["word_count"] - wordCountOffset);
+                                return {word_count: (state["word_count"] - wordCountOffset)};
+                            }
+                            function getDisplay(state, displayData) {
+                                if(displayData == null || displayData == undefined) {
+                                    displayData = getDisplayData(state);
+                                }
+                                return "Word count: " + displayData.word_count;
                             }
                             function getStartTags(state) {
                                 var textBox = document.getElementById("text_box");
@@ -334,6 +350,7 @@ Happy Writing!</pre>
                             widgetStateUpdate[widgetType] = {
                                 getStartTags: getStartTags,
                                 getNewState: getNewState,
+                                getDisplayData: getDisplayData,
                                 getDisplay: getDisplay,
                                 performUpdate: function(state) {
                                     var stateUpdate = getNewState(state);
@@ -371,8 +388,7 @@ Happy Writing!</pre>
                             globalState["sprint_history"] = [];
                             globalState["sprint_display_size"] = "single";
                             function getDisplay(state) {
-
-                                if(state["sprint_start_time"] >= 0 && (state["sprint_duration"] + state["sprint_start_time"] > getTime())) {
+                                if(state !== null && state != undefined && state["sprint_start_time"] >= 0 && (state["sprint_duration"] + state["sprint_start_time"] > getTime())) {
                                     var timeToGo = state["sprint_duration"] + state["sprint_start_time"] - getTime();
                                     return "-- " + Math.floor(timeToGo/60) + " minutes and " + (timeToGo%60).toFixed(0) + " seconds to go. --";
                                 }
@@ -385,10 +401,6 @@ Happy Writing!</pre>
                                 globalState["sprint_start_tags"] = {};
                                 for(var widgetKey in widgetState) {
                                     globalState["sprint_start_tags"][widgetKey] = widgetState[widgetKey].getStartTags(globalState);
-                                    //var startTags = widgetState[key];
-                                    //for(var startTag in startTags) {
-                                    //    globalState["sprint_start_tags"][widgetKey][startTag] = startTags[startTag];
-                                    //}
                                 }
                                 sprintP.innerHTML = getDisplay(globalState);
                             }
@@ -397,6 +409,19 @@ Happy Writing!</pre>
                             sprintResetButton.onclick = resetSprintStartTime;
                             sprintResetButton.innerHTML = "Start Sprint";
 
+                            function getDisplayForSprintHistoryObject(sprintDisplayObject){
+                                var displayStr = "<br><i>-- " + sprintDisplayObject.title + " --</i><br>" + sprintDisplayObject.end_time + " - " + sprintDisplayObject.duration + " minutes:";
+                                for (var i=0; i<widgetResolutionOrder.length; i++) {
+                                    var widgetKey = widgetResolutionOrder[i];
+                                    if(widgetKey in widgetState) {
+                                        var sprintStat = widgetState[widgetKey].getDisplay(null, sprintDisplayObject);
+                                        if (sprintStat.trim() != "" && widgetKey != "sprint") {
+                                            displayStr += "<br>" + sprintStat;
+                                        }
+                                    }
+                                }
+                                return displayStr;
+                            }
                             function updateSprintHistory(state){
                                 var sprintHistoryP = document.getElementById("sprint_history_p");
                                 sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
@@ -406,7 +431,7 @@ Happy Writing!</pre>
                                     sprintDisplayMin = sprintDisplayMax - 1;
                                 }
                                 for(var i=sprintDisplayMin; i<sprintDisplayMax; i++) {
-                                    sprintHistoryP.innerHTML += "<br>" + state["sprint_history"][i];
+                                    sprintHistoryP.innerHTML += "<br>" + getDisplayForSprintHistoryObject(state["sprint_history"][i]);
                                 }
                             }
                             function cycleSprintHistory() {
@@ -478,32 +503,28 @@ Happy Writing!</pre>
                             widgetStateUpdate[widgetType] = {
                                 getStartTags: function(){return {};},
                                 getNewState: getNewState,
+                                getDisplayData: function(state) {return {};},
                                 getDisplay: getDisplay,
                                 performUpdate: function(state) {
                                     var stateUpdate = getNewState(state);
                                     document.getElementById("sprint_p").innerHTML = getDisplay(stateUpdate);
-                                    if( stateUpdate["sprint_start_time"] < 0 && (state["sprint_start_time"] >= 0)) {
-                                            var sprintHistory = "<br><i>-- " + document.getElementById("sprint_name").value.trim() + " --</i>";
-                                            sprintHistory += "<br>" + getPrettyTime(getTime()) + " - " + (stateUpdate["sprint_duration"]/60) + " minutes:";
+                                    if(stateUpdate["sprint_start_time"] < 0 && (state["sprint_start_time"] >= 0)) {
+                                            var sprintDisplayObject = {
+                                                title: document.getElementById("sprint_name").value.trim(),
+                                                end_time: getPrettyTime(getTime()),
+                                                duration: stateUpdate["sprint_duration"]/60
+                                            }
                                             for (var i=0; i<widgetResolutionOrder.length; i++) {
                                                 var widgetKey = widgetResolutionOrder[i];
                                                 if(widgetKey in widgetState) {
-                                                    var startTags = state["sprint_start_tags"][widgetKey];
-                                                    var taggedState = JSON.parse(JSON.stringify(state));
-                                                    for(var startTag in startTags) {
-                                                        taggedState[startTag] = startTags[startTag];
-                                                    }
-
-                                                    var sprintStat = widgetState[widgetKey].getDisplay(taggedState);
-                                                    if (sprintStat.trim() != "" && widgetKey != "sprint") {
-                                                        sprintHistory += "<br>" + sprintStat;
-                                                    }
+                                                    var taggedState = mergeObjects(state, state["sprint_start_tags"][widgetKey]);
+                                                    sprintDisplayObject = mergeObjects(sprintDisplayObject, widgetState[widgetKey].getDisplayData(taggedState));
                                                 }
                                             }
                                             if(stateUpdate["sprint_history"].length > 15) {
-                                                stateUpdate.shift();
+                                                stateUpdate["sprint_history"].shift();
                                             }
-                                            stateUpdate["sprint_history"].push(sprintHistory);
+                                            stateUpdate["sprint_history"].push(sprintDisplayObject);
                                             updateSprintHistory(stateUpdate);
                                             saveState();
                                             alert("Times up!");
@@ -541,8 +562,14 @@ Happy Writing!</pre>
                             function computeWordsPerMinute(state) {
                                 return (state["word_count"]-state["wpm_offset"])*60.0/( getTime() - state["wpm_start_time"]);
                             }
-                            function getDisplay(state) {
-                                return "Words/Minute: " + computeWordsPerMinute(state).toFixed(2);
+                            function getDisplayData(state) {
+                                return {wpm: computeWordsPerMinute(state).toFixed(2)};
+                            }
+                            function getDisplay(state, displayData) {
+                                if(displayData == null || displayData == undefined) {
+                                    displayData = getDisplayData(state);
+                                }
+                                return "Words/Minute: " + displayData.wpm;
                             }
                             function getNewState(oldState) {
                                 return {wpm_offset: oldState.wpm_offset, word_count: oldState.word_count, wpm_start_time: oldState.wpm_start_time};
@@ -578,6 +605,7 @@ Happy Writing!</pre>
                             widgetStateUpdate[widgetType] = {
                                 getStartTags: getStartTags,
                                 getNewState: getNewState,
+                                getDisplayData: getDisplayData,
                                 getDisplay: getDisplay,
                                 performUpdate: function(state) {
                                     var stateUpdate = getNewState(state);
@@ -605,6 +633,7 @@ Happy Writing!</pre>
                             widgetStateUpdate[widgetType] = {
                                 getStartTags: function(state) {return {};},
                                 getNewState: function(state) {return {};},
+                                getDisplayData: function(state) {return {};},
                                 getDisplay: function(state) {return "";},
                                 performUpdate: function(state) {
                                     return {};
