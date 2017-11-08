@@ -39,8 +39,8 @@ edit, you can enable the scroll limit to hide what you already wrote.
 Sprint durations can be set in minutes, and labeled with a sprint
 name. Upon pressing the "<i>Start Sprint</i>" button your time remaining will
 count down. Your stats for (up to) the last 15 sprints are saved.
-Pressing the "<i>Show (None/All/Last) Sprint</i>" button cycles through the
-listed display options.
+Pressing the "<i>Show (None/All/Last/CSV) Sprint</i>" button cycles through the
+listed display options. You can download your stats in csv format from the csv display option.
 
 You can periodically save your work to the browser. By default this
 happens automatically every minute. Reloading can be done via the
@@ -74,6 +74,25 @@ Happy Writing!</pre>
                 }
                 return mergedJson;
             }
+            function generateCSVFromJSONArray(rows, newlineDelim) {
+                if(newlineDelim == null || newlineDelim == undefined) {
+                    newlineDelim = "\r\n";
+                }
+                var delim = ",";
+                if(rows.length == 0) {
+                    return "";
+                }
+                fields = Object.keys(rows[0]);
+                var csv = rows.map(
+                    function(row) {
+                        return fields.map(
+                            function(field) {
+                                return JSON.stringify(row[field]);
+                        }).join(delim)
+                    });
+                return fields.join(delim) + newlineDelim + csv.join(newlineDelim);
+            }
+
             function getTime() {
                 return new Date().getTime() / 1000;
             }
@@ -425,6 +444,11 @@ Happy Writing!</pre>
                             function updateSprintHistory(state){
                                 var sprintHistoryP = document.getElementById("sprint_history_p");
                                 sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
+                                if(state["sprint_display_size"] == "csv") {
+                                    sprintHistoryP.innerHTML += "<br>" + generateCSVFromJSONArray(state["sprint_history"], "<br>");
+                                    sprintHistoryP.innerHTML += "<br>" + "<a href='data:text/plain;charset=utf-8," + escape(generateCSVFromJSONArray(state["sprint_history"], "\r\n")) +"' target=\"_blank\" download=\"sprintHistory.csv\">Download sprint history!!</a>";
+                                    return;
+                                }
                                 var sprintDisplayMin = 0;
                                 var sprintDisplayMax = state["sprint_history"].length;
                                 if(state["sprint_display_size"] == "single" && sprintDisplayMax > 1) {
@@ -445,6 +469,9 @@ Happy Writing!</pre>
                                         sprintDisplaySize = "single";
                                         break;
                                     case "single":
+                                        sprintDisplaySize = "csv";
+                                        break;
+                                    case "csv":
                                         sprintDisplaySize = "none";
                                         break;
                                     default:
@@ -463,7 +490,7 @@ Happy Writing!</pre>
                             var toggleSprintHistoryButton = document.createElement("BUTTON");
                             toggleSprintHistoryButton.id = "sprint_display_sprint_history";
                             toggleSprintHistoryButton.onclick = cycleSprintHistory;
-                            toggleSprintHistoryButton.innerHTML = "Show (None/All/Last) Sprint";
+                            toggleSprintHistoryButton.innerHTML = "Show (None/All/Last/CSV) Sprint";
 
                             var sprintTag = document.createElement("input");
                             sprintTag.id = "sprint_name";
@@ -479,7 +506,6 @@ Happy Writing!</pre>
                             sprintControls.appendChild(toggleSprintHistoryButton);
                             sprintControls.appendChild(document.createTextNode(" "));
                             sprintControls.appendChild(sprintTag);
-
 
                             element.appendChild(heading);
                             element.appendChild(sprintP);
@@ -832,7 +858,7 @@ Happy Writing!</pre>
                 updateState();
                 saveState();
                 var totalText = globalState["hidden_text"] + document.getElementById("text_box").value;
-                document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(totalText) +"' target=\"_blank\" download=\"tv.txt\">Download it!!</a><p style=\"white-space:pre-wrap;\">" + totalText + "</p></body></html>");
+                document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(totalText) +"' target=\"_blank\" download=\"tv.txt\">Download text!!</a><br><a href='data:text/plain;charset=utf-8," + escape(generateCSVFromJSONArray(globalState["sprint_history"], "\r\n")) +"' target=\"_blank\" download=\"sprintHistory.csv\">Download sprint history!!</a><p style=\"white-space:pre-wrap;\">" + totalText + "</p></body></html>");
                 document.close();
             }
             //This is questionable... seems fragile:
