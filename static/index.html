@@ -561,15 +561,15 @@ Happy Writing!</pre>
                         }
                         break;
                     case "wpm":
-                        var wpmToggleButton = document.getElementById("wpm_toggle");
-                        if(wpmToggleButton == null){
+                        var wpmP = document.getElementById("wpm_p");
+                        if(wpmP == null){
                             var heading = document.createElement("p");
                             heading.innerHTML = "<i>Words per minute</i>:";
                             element.appendChild(heading);
 
                             globalState["wpm_offset"] = 0;
                             //wpm stat:
-                            var wpmP = document.createElement("p");
+                            wpmP = document.createElement("p");
                             wpmP.id = "wpm_p";
                             wpmP.innerHTML = "Words/Minute: 0.0";
                             wpmP.style.visibility = "visible";
@@ -606,25 +606,7 @@ Happy Writing!</pre>
                             wpmResetButton.innerHTML = "Reset Words/Minute";
                             wpmResetButton.style.visibility = "visible";
 
-                            //toggle wpm visibility:
-                            function toggleWordsPerMinute() {
-                                var wpmElems = ["wpm_reset_button", "wpm_p"];
-                                for(var i in wpmElems) {
-                                    var wpmElem = wpmElems[i];
-                                    if (document.getElementById(wpmElem).style.visibility != "visible") {
-                                       document.getElementById(wpmElem).style.visibility = "visible" ;
-                                    } else {
-                                       document.getElementById(wpmElem).style.visibility = "hidden" ;
-                                    }
-                                }
-                            }
-                            var wpmToggleButton = document.createElement("BUTTON");
-                            wpmToggleButton.id = "wpm_toggle";
-                            wpmToggleButton.onclick = toggleWordsPerMinute;
-                            wpmToggleButton.innerHTML = "Show/Hide Words/Minute";
-
                             element.appendChild(heading);
-                            element.appendChild(wpmToggleButton);
                             element.appendChild(wpmResetButton);
                             element.appendChild(wpmP);
 
