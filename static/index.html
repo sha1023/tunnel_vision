@@ -6,20 +6,15 @@
         <p style="text-align:center;"><i>I do not like work even when someone else does it.</i> -- Mark Twain</p>
         <hr>
         <hr>
-        <div id="center_divs" align="center" style="border-size:1px;"><p class="url_layouts" id="C" style="display:none">C = </p></div>
-        <div id="left_divs" style="float:left;border-size:1px;"><p class="url_layouts" id="L" style="display:none">L = </p></div>
-        <div id="right_divs" style="float:right;border-size:1px;"><p class="url_layouts" id="R" style="display:none">R = </p></div>
-        <div style="clear:both; bottom: 5px;">
-            <hr>
-            <hr>
-            <div>
-            <p id="save_stats" style="float:left">-- Not Saved. --</p>
-            <p style="float:right"><button onclick="saveState()">Save?</button> to browser (<i>ctrl-s</i>)<br><input type="checkbox" id="auto_save" checked> 1 minute auto-save?<br><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
-            </div>
-            <hr style="clear:both">
-            <button onclick="toggleLayouts()">Layout Options</button><p class="url_layouts" id="default_layouts" style="display:none"> </p>
-            <p><button onclick="toggleAbout()">Show/Hide Instructions</button></p>
-            <pre id="about_text" style="display:none">
+        
+        <div>
+        <p style="float:left"><button onclick="toDownloadPage()">Download what I wrote.</button></p>
+        <p style="float:right">
+            <button onclick="toggleAbout()">Show/Hide Instructions</button>
+            <button onclick="toggleLayouts()">Layout Options</button>
+        </p>
+        <p class="url_layouts" id="default_layouts" style="display:none;clear:both"> </p>
+        <pre id="about_text" style="display:none;clear:both">
 Tunnel-vision prevents overediting by limiting how much of your
 previous work you can see.
 
@@ -62,7 +57,21 @@ and either copy the displayed text, or download the generated text
 file.
 
 Happy Writing!</pre>
-            <p><button onclick="toDownloadPage()">Download what I wrote.</button></p>
+</div>
+        <div style="clear:both; bottom: 5px;">
+            <hr>
+            <div id="center_divs" align="center" style="border-size:1px;"><p class="url_layouts" id="C" style="display:none">C = </p></div>
+            <div id="left_divs" style="float:left;border-size:1px;"><p class="url_layouts" id="L" style="display:none">L = </p></div>
+            <div id="right_divs" style="float:right;border-size:1px;"><p class="url_layouts" id="R" style="display:none">R = </p></div>
+            <div style="clear:both; bottom: 5px;">
+                <hr>
+                <hr>
+                <div>
+                <p id="save_stats" style="float:left">-- Not Saved. --</p>
+                <p style="float:right"><button onclick="saveState()">Save?</button> to browser (<i>ctrl-s</i>)<br><input type="checkbox" id="auto_save" checked> 1 minute auto-save?<br><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
+                </div>
+                <hr style="clear:both">
+            </div>
         </div>
         <script>
             function mergeObjects(...jsons) {
