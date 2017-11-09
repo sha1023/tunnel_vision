@@ -445,8 +445,8 @@ Happy Writing!</pre>
                                 var sprintHistoryP = document.getElementById("sprint_history_p");
                                 sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
                                 if(state["sprint_display_type"] == "csv") {
-                                    sprintHistoryP.innerHTML += "<br>" + generateCSVFromJSONArray(state["sprint_history"], "<br>");
                                     sprintHistoryP.innerHTML += "<br>" + "<a href='data:text/plain;charset=utf-8," + escape(generateCSVFromJSONArray(state["sprint_history"], "\r\n")) +"' target=\"_blank\" download=\"sprintHistory.csv\">Download sprint history!!</a>";
+                                    sprintHistoryP.innerHTML += "<br>" + generateCSVFromJSONArray(state["sprint_history"], "<br>");
                                     return;
                                 }
                                 var sprintDisplayMin = 0;
