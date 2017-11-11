@@ -409,12 +409,13 @@ Happy Writing!</pre>
 
                             var sprintHistoryP = document.createElement("p");
                             sprintHistoryP.id = "sprint_history_p";
-                            sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
+                            sprintHistoryP.innerHTML = "<i>(None/All/<b>Last</b>/CSV) Sprint history</i>:";
                             sprintHistoryP.style.display = "block";
 
                             globalState["sprint_start_time"] = -1;
                             globalState["sprint_history"] = [];
                             globalState["sprint_display_type"] = "single";
+                            globalState["sprint_display_heading"] = "<i>(<b>None</b>/All/Last/CSV) Sprint history</i>:";
                             function getDisplay(state) {
                                 if(state !== null && state != undefined && state["sprint_start_time"] >= 0 && (state["sprint_duration"] + state["sprint_start_time"] > getTime())) {
                                     var timeToGo = state["sprint_duration"] + state["sprint_start_time"] - getTime();
@@ -452,7 +453,7 @@ Happy Writing!</pre>
                             }
                             function updateSprintHistory(state){
                                 var sprintHistoryP = document.getElementById("sprint_history_p");
-                                sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
+                                sprintHistoryP.innerHTML = state["sprint_display_heading"];
                                 if(state["sprint_display_type"] == "csv") {
                                     sprintHistoryP.innerHTML += "<br>" + "<a href='data:text/plain;charset=utf-8," + escape(generateCSVFromJSONArray(state["sprint_history"], "\r\n")) +"' target=\"_blank\" download=\"sprintHistory.csv\">Download sprint history!!</a>";
                                     sprintHistoryP.innerHTML += "<br>" + generateCSVFromJSONArray(state["sprint_history"], "<br>");
@@ -473,18 +474,23 @@ Happy Writing!</pre>
                                 switch(globalState["sprint_display_type"]) {
                                     case "none":
                                         sprintDisplaySize = "all";
+                                        globalState["sprint_display_heading"] = "<i>(None/<b>All</b>/Last/CSV) Sprint history</i>:";
                                         break;
                                     case "all":
                                         sprintDisplaySize = "single";
+                                        globalState["sprint_display_heading"] = "<i>(None/All/<b>Last</b>/CSV) Sprint history</i>:";
                                         break;
                                     case "single":
                                         sprintDisplaySize = "csv";
+                                        globalState["sprint_display_heading"] = "<i>(None/All/Last/<b>CSV</b>) Sprint history</i>:";
                                         break;
                                     case "csv":
                                         sprintDisplaySize = "none";
+                                        globalState["sprint_display_heading"] = "<i>(<b>None</b>/All/Last/CSV) Sprint history</i>:";
                                         break;
                                     default:
                                         sprintDisplaySize = "none";
+                                        globalState["sprint_display_heading"] = "<i>(<b>None</b>/All/Last/CSV) Sprint history</i>:";
                                         break;
                                 }
                                 globalState["sprint_display_type"] = sprintDisplaySize;
