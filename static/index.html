@@ -752,11 +752,18 @@ Happy Writing!</pre>
                 var defaultLayouts = document.getElementById("default_layouts");
                 if(defaultLayouts.innerHTML.trim() == "") {
                     var defaultParams = replaceWai(getDefaultParams(false));
+                    var twoColsParams = replaceWai("?L=tunnel&R=sprint,wpm");
                     var moreWidgetsParams = replaceWai("?L=tunnel,save&R=sprint,stats,wpm");
                     var justTunnelParams = replaceWai("?C=tunnel");
                     var notesParams = replaceWai("?L=tunnel,save&R=notes,sprint,stats,wpm");
                     var randParams = replaceWai(getRandomParams());
-                    defaultLayouts.innerHTML = "Adjust url parameters to change layout:<br><b>Minimal:</b> <a href=\"" + defaultParams +"\">" + defaultParams + "</a><br><b>More Widgets:</b> <a href=\"" + moreWidgetsParams +"\">" + moreWidgetsParams + "</a><br><b>No Frills:</b> <a href=\"" + justTunnelParams +"\">" + justTunnelParams + "</a><br><b>Notes & Widgets:</b> <a href=\"" + notesParams +"\">" + notesParams + "</a><br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
+                    defaultLayouts.innerHTML = "Adjust url parameters to change layout:"
+                    defaultLayouts.innerHTML += "<br><b>One Column:</b> <a href=\"" + defaultParams +"\">" + defaultParams + "</a>"
+                    defaultLayouts.innerHTML += "<br><b>Two Columns:</b> <a href=\"" + twoColsParams +"\">" + twoColsParams + "</a>"
+                    //defaultLayouts.innerHTML += "<br><b>More Widgets:</b> <a href=\"" + moreWidgetsParams +"\">" + moreWidgetsParams + "</a>"
+                    defaultLayouts.innerHTML += "<br><b>No Frills:</b> <a href=\"" + justTunnelParams +"\">" + justTunnelParams + "</a>"
+                    defaultLayouts.innerHTML += "<br><b>More Widgets:</b> <a href=\"" + notesParams +"\">" + notesParams + "</a>"
+                    defaultLayouts.innerHTML += "<br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
                 }
                 if(defaultLayouts.style.display == "none") {
                     urlLayouts = document.getElementsByClassName("url_layouts")
