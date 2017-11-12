@@ -539,6 +539,7 @@ Happy Writing!</pre>
                                 newState["sprint_duration"] = oldState["sprint_duration"];
                                 newState["sprint_history"] = oldState["sprint_history"];
                                 newState["sprint_display_type"] = oldState["sprint_display_type"];
+                                newState["sprint_display_heading"] = oldState["sprint_display_heading"];
                                 if(oldState["sprint_start_time"] > 0) {
                                     if(oldState["sprint_duration"] + oldState["sprint_start_time"] <= getTime()) {
                                         newState["sprint_start_time"] = -1;
@@ -619,7 +620,7 @@ Happy Writing!</pre>
                                 return "Words/Minute: " + displayData.wpm;
                             }
                             function getNewState(oldState) {
-                                return {wpm_offset: oldState.wpm_offset, word_count: oldState.word_count, wpm_start_time: oldState.wpm_start_time, sprint_display_heading: oldState.sprint_display_heading};
+                                return {wpm_offset: oldState.wpm_offset, word_count: oldState.word_count, wpm_start_time: oldState.wpm_start_time};
                             }
                             var wpmResetButton = document.createElement("BUTTON");
                             wpmResetButton.id = "wpm_reset_button";
