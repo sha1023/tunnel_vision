@@ -619,7 +619,7 @@ Happy Writing!</pre>
                                 return "Words/Minute: " + displayData.wpm;
                             }
                             function getNewState(oldState) {
-                                return {wpm_offset: oldState.wpm_offset, word_count: oldState.word_count, wpm_start_time: oldState.wpm_start_time};
+                                return {wpm_offset: oldState.wpm_offset, word_count: oldState.word_count, wpm_start_time: oldState.wpm_start_time, sprint_display_heading: oldState.sprint_display_heading};
                             }
                             var wpmResetButton = document.createElement("BUTTON");
                             wpmResetButton.id = "wpm_reset_button";
