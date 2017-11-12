@@ -243,10 +243,12 @@ Happy Writing!</pre>
                         if(notes == null) {
                             var notes = document.createElement("TEXTAREA");
                             notes.id = "notes";
-                            notes.rows = "2";
+                            notes.rows = "10";
                             notes.cols = "50";
+                            notes.style.fontSize = "14px";
                             var heading = document.createElement("p");
                             heading.innerHTML = "<i>Notes</i>:";
+
                             element.appendChild(heading);
                             element.appendChild(notes);
                         }
@@ -279,8 +281,10 @@ Happy Writing!</pre>
 
                             var tunnel = document.createElement("TEXTAREA");
                             tunnel.id = "text_box";
-                            tunnel.rows = "2";
+                            tunnel.rows = "10";
                             tunnel.cols = "50";
+                            tunnel.style.fontSize = "14px";
+
                             element.appendChild(heading);
                             element.appendChild(tunnel);
                             element.appendChild(scrollControls);
