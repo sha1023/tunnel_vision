@@ -258,14 +258,8 @@ Happy Writing!</pre>
                         if(tunnel == null) {
                             var heading = document.createElement("p");
                             heading.innerHTML = "<i>Write here</i>:";
-
-                            var maxText = document.createElement("input");
-                            maxText.type = "number";
-                            maxText.id = "max_text";
-                            maxText.min = "20";
-                            maxText.max = "5000"
-                            maxText.placeholder = "150";
-                            maxText.defaultValue = "150";
+                            
+                            var maxText = 50;
 
                             var enableCharLimit = document.createElement("input");
                             enableCharLimit.type = "checkbox";
@@ -275,9 +269,6 @@ Happy Writing!</pre>
                             var scrollControls = document.createElement("p");
                             scrollControls.appendChild(document.createTextNode("Enable scroll limit? "));
                             scrollControls.appendChild(enableCharLimit);
-                            scrollControls.append(document.createElement("br"));
-                            scrollControls.appendChild(document.createTextNode(" Scroll limit (20-5000 chars): "));
-                            scrollControls.appendChild(maxText);
 
                             var tunnel = document.createElement("TEXTAREA");
                             tunnel.id = "text_box";
@@ -292,10 +283,9 @@ Happy Writing!</pre>
                                 var newState = {};
                                 var textBox = document.getElementById("text_box");
                                 var excessText = textBox.value.length; // Edge case that there are no spaces
-                                var maxTextLength = document.getElementById("max_text").value;
 
-                                var excessTextSpace = textBox.value.lastIndexOf(" ", textBox.value.length - maxTextLength);
-                                var excessTextNewline = textBox.value.lastIndexOf("\n", textBox.value.length - maxTextLength);
+                                var excessTextSpace = textBox.value.lastIndexOf(" ", textBox.value.length - maxText);
+                                var excessTextNewline = textBox.value.lastIndexOf("\n", textBox.value.length - maxText);
                                 excessText = excessTextSpace;
                                 if( excessText < excessTextNewline) {
                                     excessText = excessTextNewline;
@@ -322,10 +312,6 @@ Happy Writing!</pre>
                                 getDisplay: getDisplay,
                                 performUpdate: function(state) { //maybe this is a fundamental function and should be just a widget?
                                     var textBox = document.getElementById("text_box");
-                                    var maxTextInput = document.getElementById("max_text");
-                                    if(parseInt(maxTextInput.value, 10) < parseInt(maxTextInput.min, 10) || parseInt(maxTextInput.value, 10) > parseInt(maxTextInput.max, 10)) {
-                                        maxTextInput.value = maxTextInput.defaultValue;
-                                    }
                                     var stateUpdate = getNewState(state);
                                     if(stateUpdate["excess_text"] > 0 && document.getElementById("enable_char_limit").checked) {
                                         textBox.value = textBox.value.substring(stateUpdate["excess_text"], textBox.value.length+10);
