@@ -689,7 +689,7 @@ Happy Writing!</pre>
                 return replaceParam("wai", getWai(), url);
             }
             function getDefaultParams(useUserDefinedDefault) {
-                var defaultLayout = "?C=tunnel,sprint,wpm";
+                var defaultLayout = "?C=tunnel,save,sprint,wpm";
                 if(useUserDefinedDefault) {
                     var userDefinedLayout = getApi(getProjectName(), ["layout"]);
                     if(userDefinedLayout["layout"] != null) {
@@ -748,17 +748,15 @@ Happy Writing!</pre>
                 var defaultLayouts = document.getElementById("default_layouts");
                 if(defaultLayouts.innerHTML.trim() == "") {
                     var defaultParams = replaceWai(getDefaultParams(false));
-                    var twoColsParams = replaceWai("?L=tunnel&R=sprint,wpm");
-                    var moreWidgetsParams = replaceWai("?L=tunnel,save&R=sprint,stats,wpm");
+                    var twoColsParams = replaceWai("?L=tunnel,save&R=sprint,wpm");
                     var justTunnelParams = replaceWai("?C=tunnel");
-                    var notesParams = replaceWai("?L=tunnel,save&R=notes,sprint,stats,wpm");
+                    var moreWidgetsParams = replaceWai("?L=tunnel,save&R=notes,sprint,stats,wpm");
                     var randParams = replaceWai(getRandomParams());
                     defaultLayouts.innerHTML = "Adjust url parameters to change layout:"
                     defaultLayouts.innerHTML += "<br><b>One Column:</b> <a href=\"" + defaultParams +"\">" + defaultParams + "</a>"
                     defaultLayouts.innerHTML += "<br><b>Two Columns:</b> <a href=\"" + twoColsParams +"\">" + twoColsParams + "</a>"
-                    //defaultLayouts.innerHTML += "<br><b>More Widgets:</b> <a href=\"" + moreWidgetsParams +"\">" + moreWidgetsParams + "</a>"
                     defaultLayouts.innerHTML += "<br><b>No Frills:</b> <a href=\"" + justTunnelParams +"\">" + justTunnelParams + "</a>"
-                    defaultLayouts.innerHTML += "<br><b>More Widgets:</b> <a href=\"" + notesParams +"\">" + notesParams + "</a>"
+                    defaultLayouts.innerHTML += "<br><b>More Widgets:</b> <a href=\"" + moreWidgetsParams +"\">" + moreWidgetsParams + "</a>"
                     defaultLayouts.innerHTML += "<br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
                 }
                 if(defaultLayouts.style.display == "none") {
