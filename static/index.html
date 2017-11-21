@@ -326,22 +326,43 @@ Happy Writing!</pre>
                             };
                         }
                         break;
+                    case "wpm":
                     case "stats":
-                        var num_chars = document.getElementById("num_chars");
-                        if(num_chars == null) {
+                        var statsP = document.getElementById("stats_p");
+                        if(statsP == null) {
                             var heading = document.createElement("p");
                             heading.innerHTML = "<i>Stats</i>:";
-                            element.appendChild(heading);
 
-                            var statsP = document.createElement("p");
+                            statsP = document.createElement("p");
                             statsP.id = "stats_p";
                             statsP.innerHTML = "Word count: 0";
+                            statsP.innerHTML += "<br>Words/Minute: 0.0";
+
+                            globalState["wpm_offset"] = 0;
+
+                            //reset wpm:
+                            function resetWPMStartTime() {
+                                var startTags = getStartTags(globalState);
+                                for(var startTag in startTags) {
+                                    globalState[startTag] = startTags[startTag];
+                                }
+                            }
+                            resetWPMStartTime();
+                            function computeWordsPerMinute(state) {
+                                return (state["word_count"]-state["wpm_offset"])*60.0/( getTime() - state["wpm_start_time"]);
+                            }
+
+                            var wpmResetButton = document.createElement("BUTTON");
+                            wpmResetButton.id = "wpm_reset_button";
+                            wpmResetButton.onclick = resetWPMStartTime;
+                            wpmResetButton.innerHTML = "Reset Words/Minute";
 
                             element.appendChild(heading);
                             element.appendChild(statsP);
+                            element.appendChild(wpmResetButton);
                             function getNewState(oldState) {
-                                var newState = {};
                                 var textBox = document.getElementById("text_box");
+                                var newState = {wpm_offset: oldState.wpm_offset, word_count: oldState.word_count, wpm_start_time: oldState.wpm_start_time};
                                 newState["word_count"] = oldState["hidden_word_count"] + textBox.value.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
                                 newState["hidden_text"] = oldState["hidden_text"];
                                 newState["char_count"] = oldState["hidden_text"].length + textBox.value.length;
@@ -357,17 +378,20 @@ Happy Writing!</pre>
                                     charCountOffset = state["char_count_offset"];
                                 }
 
-                                return {word_count: (state["word_count"] - wordCountOffset)};
+                                return {word_count: (state["word_count"] - wordCountOffset), wpm: computeWordsPerMinute(state).toFixed(2)};
                             }
                             function getDisplay(state, displayData) {
                                 if(displayData == null || displayData == undefined) {
                                     displayData = getDisplayData(state);
                                 }
-                                return "Word count: " + displayData.word_count;
+                                if(displayData == null || displayData == undefined) {
+                                    displayData = getDisplayData(state);
+                                }
+                                return "Word count: " + displayData.word_count + "<br>Words/Minute: " + displayData.wpm;
                             }
                             function getStartTags(state) {
                                 var textBox = document.getElementById("text_box");
-                                return {word_count_offset: state["word_count"], char_count_offset: state["char_count"]};
+                                return {word_count_offset: state["word_count"], char_count_offset: state["char_count"], wpm_offset: state["word_count"], wpm_start_time: getTime()};
                             }
 
                             widgetStateUpdate[widgetType] = {
@@ -568,70 +592,6 @@ Happy Writing!</pre>
                                             saveState();
                                             alert("Times up!");
                                     }
-                                    return stateUpdate;
-                                }
-                            };
-                        }
-                        break;
-                    case "wpm":
-                        var wpmP = document.getElementById("wpm_p");
-                        if(wpmP == null){
-                            var heading = document.createElement("p");
-                            heading.innerHTML = "<i>Words per minute</i>:";
-                            element.appendChild(heading);
-
-                            globalState["wpm_offset"] = 0;
-                            //wpm stat:
-                            wpmP = document.createElement("p");
-                            wpmP.id = "wpm_p";
-                            wpmP.innerHTML = "Words/Minute: 0.0";
-                            wpmP.style.visibility = "visible";
-
-                            //reset wpm:
-                            function getStartTags(state){
-                                return {wpm_offset: state["word_count"], wpm_start_time: getTime()};
-                            }
-                            function resetWPMStartTime() {
-                                var startTags = getStartTags(globalState);
-                                for(var startTag in startTags) {
-                                    globalState[startTag] = startTags[startTag];
-                                }
-                            }
-                            resetWPMStartTime();
-                            function computeWordsPerMinute(state) {
-                                return (state["word_count"]-state["wpm_offset"])*60.0/( getTime() - state["wpm_start_time"]);
-                            }
-                            function getDisplayData(state) {
-                                return {wpm: computeWordsPerMinute(state).toFixed(2)};
-                            }
-                            function getDisplay(state, displayData) {
-                                if(displayData == null || displayData == undefined) {
-                                    displayData = getDisplayData(state);
-                                }
-                                return "Words/Minute: " + displayData.wpm;
-                            }
-                            function getNewState(oldState) {
-                                return {wpm_offset: oldState.wpm_offset, word_count: oldState.word_count, wpm_start_time: oldState.wpm_start_time};
-                            }
-                            var wpmResetButton = document.createElement("BUTTON");
-                            wpmResetButton.id = "wpm_reset_button";
-                            wpmResetButton.onclick = resetWPMStartTime;
-                            wpmResetButton.innerHTML = "Reset Words/Minute";
-                            wpmResetButton.style.visibility = "visible";
-
-                            element.appendChild(heading);
-                            element.appendChild(wpmResetButton);
-                            element.appendChild(wpmP);
-
-                            widgetStateUpdate[widgetType] = {
-                                getStartTags: getStartTags,
-                                getNewState: getNewState,
-                                getDisplayData: getDisplayData,
-                                getDisplay: getDisplay,
-                                performUpdate: function(state) {
-                                    var stateUpdate = getNewState(state);
-                                    var wpmP = document.getElementById("wpm_p")
-                                    wpmP.innerHTML = getDisplay(stateUpdate);
                                     return stateUpdate;
                                 }
                             };
