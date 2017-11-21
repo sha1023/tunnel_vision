@@ -598,18 +598,23 @@ Happy Writing!</pre>
                         }
                         break;
                     case "save":
-                        var saveButton = document.getElementById("save_button");
-                        if(saveButton == null) {
-                            var heading = document.createElement("p");
-                            heading.innerHTML = "<i>Save</i>:";
+                        var saveP = document.getElementById("save_p");
+                        if(saveP == null) {
+                            var saveP = document.createElement("p");
+                            saveP.id = "save_p";
 
                             saveButton = document.createElement("BUTTON");
                             saveButton.id = "save_button";
                             saveButton.onclick = saveState;
                             saveButton.innerHTML = "Save?";
 
-                            element.appendChild(heading);
-                            element.appendChild(saveButton);
+                            saveP.appendChild(saveButton)
+                            saveP.appendChild(document.createTextNode(" to browser ("));
+                            var italics = document.createElement("i");
+                            italics.innerHTML = "ctrl-s";
+                            saveP.appendChild(italics);
+                            saveP.appendChild(document.createTextNode(")"));
+                            element.appendChild(saveP);
 
                             widgetStateUpdate[widgetType] = {
                                 getStartTags: function(state) {return {};},
