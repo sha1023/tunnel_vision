@@ -602,10 +602,14 @@ Happy Writing!</pre>
                             var saveP = document.createElement("p");
                             saveP.id = "save_p";
 
-                            saveButton = document.createElement("BUTTON");
+                            var saveButton = document.createElement("BUTTON");
                             saveButton.id = "save_button";
                             saveButton.onclick = saveState;
                             saveButton.innerHTML = "Save?";
+
+                            var downloadButton = document.createElement("BUTTON");
+                            downloadButton.onclick = toDownloadPage;
+                            downloadButton.innerHTML = "Download what I wrote?";
 
                             saveP.appendChild(saveButton)
                             saveP.appendChild(document.createTextNode(" to browser ("));
@@ -613,6 +617,9 @@ Happy Writing!</pre>
                             italics.innerHTML = "ctrl-s";
                             saveP.appendChild(italics);
                             saveP.appendChild(document.createTextNode(")"));
+                            saveP.appendChild(document.createElement("br"));
+                            saveP.appendChild(downloadButton);
+                            
                             element.appendChild(saveP);
 
                             widgetStateUpdate[widgetType] = {
@@ -822,8 +829,9 @@ Happy Writing!</pre>
                 updateState();
                 saveState();
                 var totalText = globalState["hidden_text"] + document.getElementById("text_box").value;
-                document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(totalText) +"' target=\"_blank\" download=\"tv.txt\">Download text!!</a><br><a href='data:text/plain;charset=utf-8," + escape(generateCSVFromJSONArray(globalState["sprint_history"], "\r\n")) +"' target=\"_blank\" download=\"sprintHistory.csv\">Download sprint history!!</a><p style=\"white-space:pre-wrap;\">" + totalText + "</p></body></html>");
-                document.close();
+                var newWindow = window.open("");
+                newWindow.document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(totalText) +"' target=\"_blank\" download=\"tv.txt\">Download text!!</a><br><a href='data:text/plain;charset=utf-8," + escape(generateCSVFromJSONArray(globalState["sprint_history"], "\r\n")) +"' target=\"_blank\" download=\"sprintHistory.csv\">Download sprint history!!</a><p style=\"white-space:pre-wrap;\">" + totalText + "</p></body></html>");
+                newWindow.document.close();
             }
             //This is questionable... seems fragile:
             var widgetResolutionOrder = ["tunnel", "stats", "wpm", "notes", "sprint", "save"];
