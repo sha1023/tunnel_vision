@@ -109,7 +109,9 @@ Happy Writing!</pre>
                 return new Date().getTime() / 1000;
             }
             function getPrettyTime(timeInSeconds) {
-                return (new Date(timeInSeconds * 1000)).toLocaleTimeString();
+                var date = new Date(timeInSeconds * 1000);
+                var prettyTime = date.toISOString().split("T")[0] + " " + date.toLocaleTimeString();
+                return prettyTime;
             }
             function getProjectName() {
                 //<p>Project Name:  <input type:"text" id="project_name"></input> <button onclick="saveState()">Save!</button><button onclick="loadSavedState()">Load...</button></p>
