@@ -654,7 +654,7 @@ Happy Writing!</pre>
                 return replaceParam("wai", getWai(), url);
             }
             function getDefaultParams(useUserDefinedDefault) {
-                var defaultLayout = "?C=tunnel,save,sprint,wpm";
+                var defaultLayout = "?C=tunnel,save,sprint,stats";
                 if(useUserDefinedDefault) {
                     var userDefinedLayout = getApi(getProjectName(), ["layout"]);
                     if(userDefinedLayout["layout"] != null) {
@@ -713,9 +713,9 @@ Happy Writing!</pre>
                 var defaultLayouts = document.getElementById("default_layouts");
                 if(defaultLayouts.innerHTML.trim() == "") {
                     var defaultParams = replaceWai(getDefaultParams(false));
-                    var twoColsParams = replaceWai("?L=tunnel,save&R=sprint,wpm");
+                    var twoColsParams = replaceWai("?L=tunnel,save&R=sprint,stats");
                     var justTunnelParams = replaceWai("?C=tunnel");
-                    var moreWidgetsParams = replaceWai("?L=tunnel,save&R=notes,sprint,stats,wpm");
+                    var moreWidgetsParams = replaceWai("?L=tunnel,save&R=notes,sprint,stats");
                     var randParams = replaceWai(getRandomParams());
                     defaultLayouts.innerHTML = "Adjust url parameters to change layout:"
                     defaultLayouts.innerHTML += "<br><b>One Column:</b> <a href=\"" + defaultParams +"\">" + defaultParams + "</a>"
