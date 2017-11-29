@@ -1,861 +1,927 @@
 <!DOCTYPE html>
 <html>
     <meta charset="utf-8">
+    <style>
+    .sidenav {
+    height: 100%;
+    width: 120px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #DCDCDC;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #000000;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 15px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
     <head>
         <title>Tunnel Vision</title>
     </head>
     <body>
-        <hr>
-        <p style="text-align:center;"><i>I do not like work even when someone else does it.</i> -- Mark Twain</p>
-        <hr>
-        <hr>
-        
-        <div>
-        <p style="float:left"><button onclick="toDownloadPage()">Download what I wrote.</button></p>
-        <p style="float:right">
-            <button onclick="toggleAbout()">Show/Hide Instructions</button>
-            <button onclick="toggleLayouts()">Layout Options</button>
-        </p>
-        <p class="url_layouts" id="default_layouts" style="display:none;clear:both"> </p>
-        <pre id="about_text" style="display:none;clear:both">
-Tunnel-vision prevents overediting by limiting how much of your
-previous work you can see.
 
-Tunnel-vision provides a variety of features to achieve your
-productivity goals. Real time word counts and words/minute stats
-prevent you from getting distracted in the moment. Timed sprints
-enhance your focus for longer time periods. Stats for the sprints
-allow you gauge the progress you make between sessions.
-
-***
-
-Instructions:
-To limit what you can see, you can physically resize your input window
-with the mouse. If that is not sufficient to curb the temptation to
-edit, you can enable the scroll limit to hide what you already wrote.
-
-Sprint durations can be set in minutes, and labeled with a sprint
-name. Upon pressing the "<i>Start Sprint</i>" button your time remaining will
-count down. Your stats for (up to) the last 15 sprints are saved.
-Pressing the "<i>Show (None/All/Last/CSV) Sprint</i>" button cycles through the
-listed display options. You can download your stats in csv format from the csv display option.
-
-You can periodically save your work to the browser. By default this
-happens automatically every minute. Reloading can be done via the
-"<i>Reload...</i>" button.
-
-<b>*A word about saving...*</b>
-As of now, your work is <b>*not*</b> backed up to the cloud. Everything saved
-is local to your web browser. This is meant primarily to prevent
-losing data if you accidentally close your browser window or navigate
-away from the page. You should <b>*always*</b> download what you wrote when
-you are done with a session. Tunnel-vision does not guarantee that
-your work will be preserved if you do not. Your work will not be
-available via this website on other computers, and opening two
-tunnel-vision windows in the same browser may result in inconsistent
-saved states.
-
-When you are done writing click on the "<i>Download what I wrote.</i>" button
-and either copy the displayed text, or download the generated text
-file.
-
-Happy Writing!</pre>
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a onClick="toggleAbout()" style="cursor:pointer">Instructions</a>
+    <a onClick="toggleLayouts()" style="cursor:pointer">Layout</a>
+    <a onClick="toDownloadPage()"  style="cursor:pointer">Download</a>
+    <a onClick="saveState()" style="cursor:pointer">Save</a>
+    <a onClick="loadSavedState()" style="cursor:pointer">Reload</a>
 </div>
-        <div style="clear:both; bottom: 5px;">
-            <hr>
-            <div id="center_divs" align="center" style="border-size:1px;"><p class="url_layouts" id="C" style="display:none">C = </p></div>
-            <div id="left_divs" style="float:left;border-size:1px;"><p class="url_layouts" id="L" style="display:none">L = </p></div>
-            <div id="right_divs" style="float:right;border-size:1px;"><p class="url_layouts" id="R" style="display:none">R = </p></div>
+
+<script>
+/* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
+function openNav() {
+    document.getElementById("mySidenav").style.width = "120px";
+    document.getElementById("main").style.marginLeft = "120px";
+}
+
+/* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginLeft = "0";
+}
+</script>
+    <hr>
+    <span style="font-size:30px;cursor:pointer;float:left;" onclick="openNav()">&#9776; menu</span>
+
+    <p style="text-align:center;"><i>I do not like work even when someone else does it.</i> -- Mark Twain</p>
+    <hr>
+    <hr>
+    <div id="main" style="margin-left:120px">
+
+            <div>
+            <p style="float:left"><button onclick="toDownloadPage()">Download what I wrote.</button></p>
+            <p style="float:right">
+                <button onclick="toggleAbout()">Show/Hide Instructions</button>
+                <button onclick="toggleLayouts()">Layout Options</button>
+            </p>
+            <p class="url_layouts" id="default_layouts" style="display:none;clear:both"> </p>
+            <pre id="about_text" style="display:none;clear:both">
+    Tunnel-vision prevents overediting by limiting how much of your
+    previous work you can see.
+
+    Tunnel-vision provides a variety of features to achieve your
+    productivity goals. Real time word counts and words/minute stats
+    prevent you from getting distracted in the moment. Timed sprints
+    enhance your focus for longer time periods. Stats for the sprints
+    allow you gauge the progress you make between sessions.
+
+    ***
+
+    Instructions:
+    To limit what you can see, you can physically resize your input window
+    with the mouse. If that is not sufficient to curb the temptation to
+    edit, you can enable the scroll limit to hide what you already wrote.
+
+    Sprint durations can be set in minutes, and labeled with a sprint
+    name. Upon pressing the "<i>Start Sprint</i>" button your time remaining will
+    count down. Your stats for (up to) the last 15 sprints are saved.
+    Pressing the "<i>Show (None/All/Last/CSV) Sprint</i>" button cycles through the
+    listed display options. You can download your stats in csv format from the csv display option.
+
+    You can periodically save your work to the browser. By default this
+    happens automatically every minute. Reloading can be done via the
+    "<i>Reload...</i>" button.
+
+    <b>*A word about saving...*</b>
+    As of now, your work is <b>*not*</b> backed up to the cloud. Everything saved
+    is local to your web browser. This is meant primarily to prevent
+    losing data if you accidentally close your browser window or navigate
+    away from the page. You should <b>*always*</b> download what you wrote when
+    you are done with a session. Tunnel-vision does not guarantee that
+    your work will be preserved if you do not. Your work will not be
+    available via this website on other computers, and opening two
+    tunnel-vision windows in the same browser may result in inconsistent
+    saved states.
+
+    When you are done writing click on the "<i>Download what I wrote.</i>" button
+    and either copy the displayed text, or download the generated text
+    file.
+
+    Happy Writing!</pre>
+    </div>
             <div style="clear:both; bottom: 5px;">
                 <hr>
-                <hr>
-                <div>
-                <p id="save_stats" style="float:left">-- Not Saved. --</p>
-                <p style="float:right"><button onclick="saveState()">Save?</button> to browser (<i>ctrl-s</i>)<br><input type="checkbox" id="auto_save" checked> 1 minute auto-save?<br><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
+                <div id="center_divs" align="center" style="border-size:1px;"><p class="url_layouts" id="C" style="display:none">C = </p></div>
+                <div id="left_divs" style="float:left;border-size:1px;"><p class="url_layouts" id="L" style="display:none">L = </p></div>
+                <div id="right_divs" style="float:right;border-size:1px;"><p class="url_layouts" id="R" style="display:none">R = </p></div>
+                <div style="clear:both; bottom: 5px;">
+                    <hr>
+                    <hr>
+                    <div>
+                    <p id="save_stats" style="float:left">-- Not Saved. --</p>
+                    <p style="float:right"><button onclick="saveState()">Save?</button> to browser (<i>ctrl-s</i>)<br><input type="checkbox" id="auto_save" checked> 1 minute auto-save?<br><button onclick="loadSavedState()">Reload...</button> last saved state.</p>
+                    </div>
+                    <hr style="clear:both">
                 </div>
-                <hr style="clear:both">
             </div>
-        </div>
-        <script>
-            function mergeObjects(...jsons) {
-                mergedJson = {};
-                for(var i in jsons) {
-                    for(var key in jsons[i]) {
-                        mergedJson[key] = jsons[i][key];
+            <script>
+                function mergeObjects(...jsons) {
+                    mergedJson = {};
+                    for(var i in jsons) {
+                        for(var key in jsons[i]) {
+                            mergedJson[key] = jsons[i][key];
+                        }
+                    }
+                    return mergedJson;
+                }
+                function generateCSVFromJSONArray(rows, newlineDelim) {
+                    if(newlineDelim == null || newlineDelim == undefined) {
+                        newlineDelim = "\r\n";
+                    }
+                    var delim = ",";
+                    if(rows.length == 0) {
+                        return "";
+                    }
+                    fields = Object.keys(rows[0]);
+                    var csv = rows.map(
+                        function(row) {
+                            return fields.map(
+                                function(field) {
+                                    return JSON.stringify(row[field]);
+                            }).join(delim)
+                        });
+                    return fields.join(delim) + newlineDelim + csv.join(newlineDelim);
+                }
+
+                function getTime() {
+                    return new Date().getTime() / 1000;
+                }
+                function getPrettyTime(timeInSeconds) {
+                    var date = new Date(timeInSeconds * 1000);
+                    var prettyTime = date.toISOString().split("T")[0] + " " + date.toLocaleTimeString();
+                    return prettyTime;
+                }
+                function getProjectName() {
+                    //<p>Project Name:  <input type:"text" id="project_name"></input> <button onclick="saveState()">Save!</button><button onclick="loadSavedState()">Load...</button></p>
+                    //not allowing users to pick names, to avoid clutter saved in the browser history.
+                    //if it were allowed:
+                    //return document.getElementById("project_name").value;
+                    return "tunnel_vision";
+                }
+                function getApi(name, keys) {
+                    var localStorage = window.localStorage;
+                    var keyDelim = "-";
+                    var jsonToReturn = {};
+                    if(name == null || name.length == 0) {
+                        alert("Can't get unnamed project.");
+                        return;
+                    }
+                    var keysLength = keys.length;
+                    for(var i=0; i < keysLength; i++) {
+                        var key = keys[i];
+                        jsonToReturn[key] = localStorage.getItem(name + keyDelim + key);
+                    }
+                    return jsonToReturn;
+                }
+                function setApi(name, jsonToBeSaved) {
+                    var localStorage = window.localStorage;
+                    var keyDelim = "-";
+                    if(name == null || name.length == 0) {
+                        alert("Can't save unless you name your project.");
+                        return;
+                    }
+                    if(jsonToBeSaved == null || jsonToBeSaved.length == 0) {
+                        alert("No data to save.");
+                        return;
+                    }
+                    for (var key in jsonToBeSaved) {
+                        localStorage.setItem(name + keyDelim + key, jsonToBeSaved[key]);
                     }
                 }
-                return mergedJson;
-            }
-            function generateCSVFromJSONArray(rows, newlineDelim) {
-                if(newlineDelim == null || newlineDelim == undefined) {
-                    newlineDelim = "\r\n";
-                }
-                var delim = ",";
-                if(rows.length == 0) {
-                    return "";
-                }
-                fields = Object.keys(rows[0]);
-                var csv = rows.map(
-                    function(row) {
-                        return fields.map(
-                            function(field) {
-                                return JSON.stringify(row[field]);
-                        }).join(delim)
-                    });
-                return fields.join(delim) + newlineDelim + csv.join(newlineDelim);
-            }
-
-            function getTime() {
-                return new Date().getTime() / 1000;
-            }
-            function getPrettyTime(timeInSeconds) {
-                var date = new Date(timeInSeconds * 1000);
-                var prettyTime = date.toISOString().split("T")[0] + " " + date.toLocaleTimeString();
-                return prettyTime;
-            }
-            function getProjectName() {
-                //<p>Project Name:  <input type:"text" id="project_name"></input> <button onclick="saveState()">Save!</button><button onclick="loadSavedState()">Load...</button></p>
-                //not allowing users to pick names, to avoid clutter saved in the browser history.
-                //if it were allowed:
-                //return document.getElementById("project_name").value;
-                return "tunnel_vision";
-            }
-            function getApi(name, keys) {
-                var localStorage = window.localStorage;
-                var keyDelim = "-";
-                var jsonToReturn = {};
-                if(name == null || name.length == 0) {
-                    alert("Can't get unnamed project.");
-                    return;
-                }
-                var keysLength = keys.length;
-                for(var i=0; i < keysLength; i++) {
-                    var key = keys[i];
-                    jsonToReturn[key] = localStorage.getItem(name + keyDelim + key);
-                }
-                return jsonToReturn;
-            }
-            function setApi(name, jsonToBeSaved) {
-                var localStorage = window.localStorage;
-                var keyDelim = "-";
-                if(name == null || name.length == 0) {
-                    alert("Can't save unless you name your project.");
-                    return;
-                }
-                if(jsonToBeSaved == null || jsonToBeSaved.length == 0) {
-                    alert("No data to save.");
-                    return;
-                }
-                for (var key in jsonToBeSaved) {
-                    localStorage.setItem(name + keyDelim + key, jsonToBeSaved[key]);
-                }
-            }
-            function saveState() {
-                var name = getProjectName();
-                var textBoxElement = document.getElementById("text_box");
-                var text = "";
-                if(textBoxElement != null){
-                    text = textBoxElement.value;
-                }
-                var text = globalState["hidden_text"] + text;
-
-                var notesElement = document.getElementById("notes");
-                var notes = "";
-                if(notesElement != null) {
-                    notes = notesElement.value;
-                }
-
-                var sprintHistory = JSON.stringify([]);
-                if("sprint_history" in globalState) {
-                    sprintHistory = JSON.stringify(globalState["sprint_history"]);
-                }
-                if(text == null || text.length == 0) {
-                    //don't save if text is null or if nothing has been written
-                    //suppress the alert for now.
-                    //alert("Error retrieving text.");
-                    return;
-                }
-                var saveJSON = {"text_box":text, "notes":notes, "sprint_history": sprintHistory} 
-                var qParams = window.location.search;
-                if(qParams.length != 0) {
-                    saveJSON["layout"] = qParams;
-                }
-                setApi(name, saveJSON);
-                globalState["last_saved_time"] = getTime();
-                document.getElementById("save_stats").innerHTML = "-- Saved " + globalState["word_count"] + " words @ " + getPrettyTime(globalState["last_saved_time"]) + ". --";
-            }
-            function loadSavedState(name) {
-                if(name == null) {
-                    name = getProjectName();
-                }
-                if(name.length == 0) {
-                    alert("Can't load unnamed project.");
-                    return;
-                }
-                var state = getApi(name, ["text_box", "notes", "sprint_history"]);
-                globalState["hidden_text"] = "";
-                if(state["text_box"] != null) {
-                    document.getElementById("text_box").value = state["text_box"];
-                }
-                if(state["notes"] != null) {
-                    var notes = document.getElementById("notes");
-                    if(notes != null) {
-                        notes.value = state["notes"];
+                function saveState() {
+                    var name = getProjectName();
+                    var textBoxElement = document.getElementById("text_box");
+                    var text = "";
+                    if(textBoxElement != null){
+                        text = textBoxElement.value;
                     }
-                }
-                if(state["sprint_history"] != null) {
-                    globalState["sprint_history"] = JSON.parse(state["sprint_history"]);
-                }
-            }
-            function getParameterByName(name, url) {
-                if (!url) url = window.location.href;
-                name = name.replace(/[\[\]]/g, "\\$&");
-                var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-                if (!results) return null;
-                if (!results[2]) return '';
-                return decodeURIComponent(results[2].replace(/\+/g, " "));
-            }
-            function replaceParam(key, value, query)
-            {
-                 //key = encodeURI(key); value = encodeURI(value);
-                if(query.startsWith("?")) {
-                    query = query.substr(1)
-                }
-                var keyValuePairs = query.split('&');
-                var newKeyValuePairs = [];
-                var found = false;
-                for(var i=0; i<keyValuePairs.length; i++) {
-                    var keyValuePair = keyValuePairs[i].split('=');
-                    if (keyValuePair[0] != key) {
-                        newKeyValuePairs.push(keyValuePairs[i]);
-                    }
-                }
-                newKeyValuePairs.push(key + "=" + value);
-                return "?" + newKeyValuePairs.join('&');
-            }
-            function createWidgetDiv(widgetType) {
-                if( widgetType == null ) {
-                    return [widgetStateUpdate, null];
-                }
-                var element = document.createElement("DIV");
-                var widgetStateUpdate = {};
+                    var text = globalState["hidden_text"] + text;
 
-                //try to create widget:
-                switch(widgetType) {
-                    case "notes":
+                    var notesElement = document.getElementById("notes");
+                    var notes = "";
+                    if(notesElement != null) {
+                        notes = notesElement.value;
+                    }
+
+                    var sprintHistory = JSON.stringify([]);
+                    if("sprint_history" in globalState) {
+                        sprintHistory = JSON.stringify(globalState["sprint_history"]);
+                    }
+                    if(text == null || text.length == 0) {
+                        //don't save if text is null or if nothing has been written
+                        //suppress the alert for now.
+                        //alert("Error retrieving text.");
+                        return;
+                    }
+                    var saveJSON = {"text_box":text, "notes":notes, "sprint_history": sprintHistory}
+                    var qParams = window.location.search;
+                    if(qParams.length != 0) {
+                        saveJSON["layout"] = qParams;
+                    }
+                    setApi(name, saveJSON);
+                    globalState["last_saved_time"] = getTime();
+                    document.getElementById("save_stats").innerHTML = "-- Saved " + globalState["word_count"] + " words @ " + getPrettyTime(globalState["last_saved_time"]) + ". --";
+                }
+                function loadSavedState(name) {
+                    if(name == null) {
+                        name = getProjectName();
+                    }
+                    if(name.length == 0) {
+                        alert("Can't load unnamed project.");
+                        return;
+                    }
+                    var state = getApi(name, ["text_box", "notes", "sprint_history"]);
+                    globalState["hidden_text"] = "";
+                    if(state["text_box"] != null) {
+                        document.getElementById("text_box").value = state["text_box"];
+                    }
+                    if(state["notes"] != null) {
                         var notes = document.getElementById("notes");
-                        if(notes == null) {
-                            var notes = document.createElement("TEXTAREA");
-                            notes.id = "notes";
-                            notes.rows = "10";
-                            notes.cols = "50";
-                            notes.style.fontSize = "medium";
-                            var heading = document.createElement("p");
-                            heading.innerHTML = "<i>Notes</i>:";
-
-                            element.appendChild(heading);
-                            element.appendChild(notes);
+                        if(notes != null) {
+                            notes.value = state["notes"];
                         }
-                        break;
-                    case "tunnel":
-                        var tunnel = document.getElementById("text_box");
-                        if(tunnel == null) {
-                            var heading = document.createElement("p");
-                            heading.innerHTML = "<i>Write here</i>:";
-                            
-                            var maxText = 50;
+                    }
+                    if(state["sprint_history"] != null) {
+                        globalState["sprint_history"] = JSON.parse(state["sprint_history"]);
+                    }
+                }
+                function getParameterByName(name, url) {
+                    if (!url) url = window.location.href;
+                    name = name.replace(/[\[\]]/g, "\\$&");
+                    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+                    if (!results) return null;
+                    if (!results[2]) return '';
+                    return decodeURIComponent(results[2].replace(/\+/g, " "));
+                }
+                function replaceParam(key, value, query)
+                {
+                     //key = encodeURI(key); value = encodeURI(value);
+                    if(query.startsWith("?")) {
+                        query = query.substr(1)
+                    }
+                    var keyValuePairs = query.split('&');
+                    var newKeyValuePairs = [];
+                    var found = false;
+                    for(var i=0; i<keyValuePairs.length; i++) {
+                        var keyValuePair = keyValuePairs[i].split('=');
+                        if (keyValuePair[0] != key) {
+                            newKeyValuePairs.push(keyValuePairs[i]);
+                        }
+                    }
+                    newKeyValuePairs.push(key + "=" + value);
+                    return "?" + newKeyValuePairs.join('&');
+                }
+                function createWidgetDiv(widgetType) {
+                    if( widgetType == null ) {
+                        return [widgetStateUpdate, null];
+                    }
+                    var element = document.createElement("DIV");
+                    var widgetStateUpdate = {};
 
-                            var enableCharLimit = document.createElement("input");
-                            enableCharLimit.type = "checkbox";
-                            enableCharLimit.id = "enable_char_limit";
-                            enableCharLimit.checked = false;
+                    //try to create widget:
+                    switch(widgetType) {
+                        case "notes":
+                            var notes = document.getElementById("notes");
+                            if(notes == null) {
+                                var notes = document.createElement("TEXTAREA");
+                                notes.id = "notes";
+                                notes.rows = "10";
+                                notes.cols = "50";
+                                notes.style.fontSize = "medium";
+                                var heading = document.createElement("p");
+                                heading.innerHTML = "<i>Notes</i>:";
 
-                            var scrollControls = document.createElement("p");
-                            scrollControls.appendChild(document.createTextNode("Enable scroll limit? "));
-                            scrollControls.appendChild(enableCharLimit);
-
-                            var tunnel = document.createElement("TEXTAREA");
-                            tunnel.id = "text_box";
-                            tunnel.rows = "10";
-                            tunnel.cols = "50";
-                            tunnel.style.fontSize = "medium";
-
-                            element.appendChild(heading);
-                            element.appendChild(tunnel);
-                            element.appendChild(scrollControls);
-                            function getNewState(oldState) {
-                                var newState = {};
-                                var textBox = document.getElementById("text_box");
-                                var excessText = textBox.value.length; // Edge case that there are no spaces
-
-                                var excessTextSpace = textBox.value.lastIndexOf(" ", textBox.value.length - maxText);
-                                var excessTextNewline = textBox.value.lastIndexOf("\n", textBox.value.length - maxText);
-                                excessText = excessTextSpace;
-                                if( excessText < excessTextNewline) {
-                                    excessText = excessTextNewline;
-                                }
-
-                                newState["excess_text"] = excessText;
-                                if(excessText > 0 && document.getElementById("enable_char_limit").checked) {
-                                    var newText = textBox.value.substring(0, excessText);
-                                    var newWords = newText.split(/[ \n]+/);
-                                    newWords = newWords.filter(function(entry) { return entry != ""; });
-                                    newState["hidden_word_count"] = oldState["hidden_word_count"] + newWords.length;
-                                    newState["hidden_text"] = oldState["hidden_text"] + newText;
-                                }
-                                return newState;
+                                element.appendChild(heading);
+                                element.appendChild(notes);
                             }
-                            function getDisplay(state) {
-                                return "";
-                            }
+                            break;
+                        case "tunnel":
+                            var tunnel = document.getElementById("text_box");
+                            if(tunnel == null) {
+                                var heading = document.createElement("p");
+                                heading.innerHTML = "<i>Write here</i>:";
 
-                            widgetStateUpdate[widgetType] = {
-                                getStartTags: function(){return {};},
-                                getNewState: getNewState,
-                                getDisplayData: function(state) {return {};},
-                                getDisplay: getDisplay,
-                                performUpdate: function(state) { //maybe this is a fundamental function and should be just a widget?
+                                var maxText = 50;
+
+                                var enableCharLimit = document.createElement("input");
+                                enableCharLimit.type = "checkbox";
+                                enableCharLimit.id = "enable_char_limit";
+                                enableCharLimit.checked = false;
+
+                                var scrollControls = document.createElement("p");
+                                scrollControls.appendChild(document.createTextNode("Enable scroll limit? "));
+                                scrollControls.appendChild(enableCharLimit);
+
+                                var tunnel = document.createElement("TEXTAREA");
+                                tunnel.id = "text_box";
+                                tunnel.rows = "10";
+                                tunnel.cols = "50";
+                                tunnel.style.fontSize = "medium";
+
+                                element.appendChild(heading);
+                                element.appendChild(tunnel);
+                                element.appendChild(scrollControls);
+                                function getNewState(oldState) {
+                                    var newState = {};
                                     var textBox = document.getElementById("text_box");
-                                    var stateUpdate = getNewState(state);
-                                    if(stateUpdate["excess_text"] > 0 && document.getElementById("enable_char_limit").checked) {
-                                        textBox.value = textBox.value.substring(stateUpdate["excess_text"], textBox.value.length+10);
+                                    var excessText = textBox.value.length; // Edge case that there are no spaces
+
+                                    var excessTextSpace = textBox.value.lastIndexOf(" ", textBox.value.length - maxText);
+                                    var excessTextNewline = textBox.value.lastIndexOf("\n", textBox.value.length - maxText);
+                                    excessText = excessTextSpace;
+                                    if( excessText < excessTextNewline) {
+                                        excessText = excessTextNewline;
                                     }
-                                    return stateUpdate;
+
+                                    newState["excess_text"] = excessText;
+                                    if(excessText > 0 && document.getElementById("enable_char_limit").checked) {
+                                        var newText = textBox.value.substring(0, excessText);
+                                        var newWords = newText.split(/[ \n]+/);
+                                        newWords = newWords.filter(function(entry) { return entry != ""; });
+                                        newState["hidden_word_count"] = oldState["hidden_word_count"] + newWords.length;
+                                        newState["hidden_text"] = oldState["hidden_text"] + newText;
+                                    }
+                                    return newState;
                                 }
-                            };
-                        }
-                        break;
-                    case "wpm":
-                    case "stats":
-                        var statsP = document.getElementById("stats_p");
-                        if(statsP == null) {
-                            var heading = document.createElement("p");
-                            heading.innerHTML = "<i>Stats</i>:";
-
-                            statsP = document.createElement("p");
-                            statsP.id = "stats_p";
-                            statsP.innerHTML = "Word count: 0";
-                            statsP.innerHTML += "<br>Words/Minute: 0.0";
-
-                            globalState["wpm_offset"] = 0;
-
-                            //reset wpm:
-                            function resetWPMStartTime() {
-                                var startTags = getStartTags(globalState);
-                                for(var startTag in startTags) {
-                                    globalState[startTag] = startTags[startTag];
+                                function getDisplay(state) {
+                                    return "";
                                 }
+
+                                widgetStateUpdate[widgetType] = {
+                                    getStartTags: function(){return {};},
+                                    getNewState: getNewState,
+                                    getDisplayData: function(state) {return {};},
+                                    getDisplay: getDisplay,
+                                    performUpdate: function(state) { //maybe this is a fundamental function and should be just a widget?
+                                        var textBox = document.getElementById("text_box");
+                                        var stateUpdate = getNewState(state);
+                                        if(stateUpdate["excess_text"] > 0 && document.getElementById("enable_char_limit").checked) {
+                                            textBox.value = textBox.value.substring(stateUpdate["excess_text"], textBox.value.length+10);
+                                        }
+                                        return stateUpdate;
+                                    }
+                                };
                             }
-                            resetWPMStartTime();
-                            function computeWordsPerMinute(state) {
-                                return (state["word_count"]-state["wpm_offset"])*60.0/( getTime() - state["wpm_start_time"]);
-                            }
+                            break;
+                        case "wpm":
+                        case "stats":
+                            var statsP = document.getElementById("stats_p");
+                            if(statsP == null) {
+                                var heading = document.createElement("p");
+                                heading.innerHTML = "<i>Stats</i>:";
 
-                            var wpmResetButton = document.createElement("BUTTON");
-                            wpmResetButton.id = "wpm_reset_button";
-                            wpmResetButton.onclick = resetWPMStartTime;
-                            wpmResetButton.innerHTML = "Reset Words/Minute";
+                                statsP = document.createElement("p");
+                                statsP.id = "stats_p";
+                                statsP.innerHTML = "Word count: 0";
+                                statsP.innerHTML += "<br>Words/Minute: 0.0";
 
-                            element.appendChild(heading);
-                            element.appendChild(statsP);
-                            element.appendChild(wpmResetButton);
-                            function getNewState(oldState) {
-                                var textBox = document.getElementById("text_box");
-                                var newState = {wpm_offset: oldState.wpm_offset, word_count: oldState.word_count, wpm_start_time: oldState.wpm_start_time};
-                                newState["word_count"] = oldState["hidden_word_count"] + textBox.value.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
-                                newState["hidden_text"] = oldState["hidden_text"];
-                                newState["char_count"] = oldState["hidden_text"].length + textBox.value.length;
-                                return newState;
-                            }
-                            function getDisplayData(state) {
-                                var wordCountOffset = 0;
-                                var charCountOffset = 0;
-                                if("word_count_offset" in state) {
-                                    wordCountOffset = state["word_count_offset"];
+                                globalState["wpm_offset"] = 0;
+
+                                //reset wpm:
+                                function resetWPMStartTime() {
+                                    var startTags = getStartTags(globalState);
+                                    for(var startTag in startTags) {
+                                        globalState[startTag] = startTags[startTag];
+                                    }
                                 }
-                                if("char_count_offset" in state) {
-                                    charCountOffset = state["char_count_offset"];
+                                resetWPMStartTime();
+                                function computeWordsPerMinute(state) {
+                                    return (state["word_count"]-state["wpm_offset"])*60.0/( getTime() - state["wpm_start_time"]);
                                 }
 
-                                return {word_count: (state["word_count"] - wordCountOffset), wpm: computeWordsPerMinute(state).toFixed(2)};
-                            }
-                            function getDisplay(state, displayData) {
-                                if(displayData == null || displayData == undefined) {
-                                    displayData = getDisplayData(state);
+                                var wpmResetButton = document.createElement("BUTTON");
+                                wpmResetButton.id = "wpm_reset_button";
+                                wpmResetButton.onclick = resetWPMStartTime;
+                                wpmResetButton.innerHTML = "Reset Words/Minute";
+
+                                element.appendChild(heading);
+                                element.appendChild(statsP);
+                                element.appendChild(wpmResetButton);
+                                function getNewState(oldState) {
+                                    var textBox = document.getElementById("text_box");
+                                    var newState = {wpm_offset: oldState.wpm_offset, word_count: oldState.word_count, wpm_start_time: oldState.wpm_start_time};
+                                    newState["word_count"] = oldState["hidden_word_count"] + textBox.value.split(/[ \n]+/).filter(function(entry) { return entry != ""; }).length;
+                                    newState["hidden_text"] = oldState["hidden_text"];
+                                    newState["char_count"] = oldState["hidden_text"].length + textBox.value.length;
+                                    return newState;
                                 }
-                                if(displayData == null || displayData == undefined) {
-                                    displayData = getDisplayData(state);
+                                function getDisplayData(state) {
+                                    var wordCountOffset = 0;
+                                    var charCountOffset = 0;
+                                    if("word_count_offset" in state) {
+                                        wordCountOffset = state["word_count_offset"];
+                                    }
+                                    if("char_count_offset" in state) {
+                                        charCountOffset = state["char_count_offset"];
+                                    }
+
+                                    return {word_count: (state["word_count"] - wordCountOffset), wpm: computeWordsPerMinute(state).toFixed(2)};
                                 }
-                                return "Word count: " + displayData.word_count + "<br>Words/Minute: " + displayData.wpm;
-                            }
-                            function getStartTags(state) {
-                                var textBox = document.getElementById("text_box");
-                                return {word_count_offset: state["word_count"], char_count_offset: state["char_count"], wpm_offset: state["word_count"], wpm_start_time: getTime()};
-                            }
-
-                            widgetStateUpdate[widgetType] = {
-                                getStartTags: getStartTags,
-                                getNewState: getNewState,
-                                getDisplayData: getDisplayData,
-                                getDisplay: getDisplay,
-                                performUpdate: function(state) {
-                                    var stateUpdate = getNewState(state);
-                                    var statsP = document.getElementById("stats_p");
-                                    statsP.innerHTML = getDisplay(stateUpdate);
-                                    return stateUpdate;
+                                function getDisplay(state, displayData) {
+                                    if(displayData == null || displayData == undefined) {
+                                        displayData = getDisplayData(state);
+                                    }
+                                    if(displayData == null || displayData == undefined) {
+                                        displayData = getDisplayData(state);
+                                    }
+                                    return "Word count: " + displayData.word_count + "<br>Words/Minute: " + displayData.wpm;
                                 }
-                            };
-                        }
-                        break;
-                    case "sprint":
-                        var sprint = document.getElementById("sprint_time");
-                        if(sprint == null){
-                            var heading = document.createElement("p");
-                            heading.innerHTML = "<i>Sprint</i>:";
-                            var sprint = document.createElement("input");
-                            sprint.type= "number";
-                            sprint.id = "sprint_time";
-                            sprint.min = "1";
-                            sprint.placeholder = "15";
-                            sprint.defaultValue = "15";
-
-                            var sprintP = document.createElement("p");
-                            sprintP.id = "sprint_p";
-                            sprintP.innerHTML = "-- X minutes and X seconds to go. --";
-
-
-                            var sprintHistoryP = document.createElement("p");
-                            sprintHistoryP.id = "sprint_history_p";
-                            sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
-                            sprintHistoryP.style.display = "block";
-
-                            globalState["sprint_start_time"] = -1;
-                            globalState["sprint_history"] = [];
-                            globalState["sprint_display_type"] = "single";
-                            globalState["sprint_display_heading"] = "Show (None/All/<b>Last</b>/CSV) Sprint";
-                            function getDisplay(state) {
-                                if(state !== null && state != undefined && state["sprint_start_time"] >= 0 && (state["sprint_duration"] + state["sprint_start_time"] > getTime())) {
-                                    var timeToGo = state["sprint_duration"] + state["sprint_start_time"] - getTime();
-                                    return "-- " + Math.floor(timeToGo/60) + " minutes and " + (timeToGo%60).toFixed(0) + " seconds to go. --";
+                                function getStartTags(state) {
+                                    var textBox = document.getElementById("text_box");
+                                    return {word_count_offset: state["word_count"], char_count_offset: state["char_count"], wpm_offset: state["word_count"], wpm_start_time: getTime()};
                                 }
-                                return "-- X minutes and X seconds to go. --";
-                            }
-                            function resetSprintStartTime() {
-                                var sprintP = document.getElementById("sprint_p");
-                                globalState["sprint_start_time"] = getTime();
-                                globalState["sprint_duration"] = document.getElementById("sprint_time").value*60;
-                                globalState["sprint_start_tags"] = {};
-                                for(var widgetKey in widgetState) {
-                                    globalState["sprint_start_tags"][widgetKey] = widgetState[widgetKey].getStartTags(globalState);
-                                }
-                                sprintP.innerHTML = getDisplay(globalState);
-                            }
-                            var sprintResetButton = document.createElement("BUTTON");
-                            sprintResetButton.id = "sprint_reset_button";
-                            sprintResetButton.onclick = resetSprintStartTime;
-                            sprintResetButton.innerHTML = "Start Sprint";
 
-                            function getDisplayForSprintHistoryObject(sprintDisplayObject){
-                                var displayStr = "<br><i>-- " + sprintDisplayObject.title + " --</i><br>" + sprintDisplayObject.end_time + " - " + sprintDisplayObject.duration + " minutes:";
-                                for (var i=0; i<widgetResolutionOrder.length; i++) {
-                                    var widgetKey = widgetResolutionOrder[i];
-                                    if(widgetKey in widgetState) {
-                                        var sprintStat = widgetState[widgetKey].getDisplay(null, sprintDisplayObject);
-                                        if (sprintStat.trim() != "" && widgetKey != "sprint") {
-                                            displayStr += "<br>" + sprintStat;
+                                widgetStateUpdate[widgetType] = {
+                                    getStartTags: getStartTags,
+                                    getNewState: getNewState,
+                                    getDisplayData: getDisplayData,
+                                    getDisplay: getDisplay,
+                                    performUpdate: function(state) {
+                                        var stateUpdate = getNewState(state);
+                                        var statsP = document.getElementById("stats_p");
+                                        statsP.innerHTML = getDisplay(stateUpdate);
+                                        return stateUpdate;
+                                    }
+                                };
+                            }
+                            break;
+                        case "sprint":
+                            var sprint = document.getElementById("sprint_time");
+                            if(sprint == null){
+                                var heading = document.createElement("p");
+                                heading.innerHTML = "<i>Sprint</i>:";
+                                var sprint = document.createElement("input");
+                                sprint.type= "number";
+                                sprint.id = "sprint_time";
+                                sprint.min = "1";
+                                sprint.placeholder = "15";
+                                sprint.defaultValue = "15";
+
+                                var sprintP = document.createElement("p");
+                                sprintP.id = "sprint_p";
+                                sprintP.innerHTML = "-- X minutes and X seconds to go. --";
+
+
+                                var sprintHistoryP = document.createElement("p");
+                                sprintHistoryP.id = "sprint_history_p";
+                                sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
+                                sprintHistoryP.style.display = "block";
+
+                                globalState["sprint_start_time"] = -1;
+                                globalState["sprint_history"] = [];
+                                globalState["sprint_display_type"] = "single";
+                                globalState["sprint_display_heading"] = "Show (None/All/<b>Last</b>/CSV) Sprint";
+                                function getDisplay(state) {
+                                    if(state !== null && state != undefined && state["sprint_start_time"] >= 0 && (state["sprint_duration"] + state["sprint_start_time"] > getTime())) {
+                                        var timeToGo = state["sprint_duration"] + state["sprint_start_time"] - getTime();
+                                        return "-- " + Math.floor(timeToGo/60) + " minutes and " + (timeToGo%60).toFixed(0) + " seconds to go. --";
+                                    }
+                                    return "-- X minutes and X seconds to go. --";
+                                }
+                                function resetSprintStartTime() {
+                                    var sprintP = document.getElementById("sprint_p");
+                                    globalState["sprint_start_time"] = getTime();
+                                    globalState["sprint_duration"] = document.getElementById("sprint_time").value*60;
+                                    globalState["sprint_start_tags"] = {};
+                                    for(var widgetKey in widgetState) {
+                                        globalState["sprint_start_tags"][widgetKey] = widgetState[widgetKey].getStartTags(globalState);
+                                    }
+                                    sprintP.innerHTML = getDisplay(globalState);
+                                }
+                                var sprintResetButton = document.createElement("BUTTON");
+                                sprintResetButton.id = "sprint_reset_button";
+                                sprintResetButton.onclick = resetSprintStartTime;
+                                sprintResetButton.innerHTML = "Start Sprint";
+
+                                function getDisplayForSprintHistoryObject(sprintDisplayObject){
+                                    var displayStr = "<br><i>-- " + sprintDisplayObject.title + " --</i><br>" + sprintDisplayObject.end_time + " - " + sprintDisplayObject.duration + " minutes:";
+                                    for (var i=0; i<widgetResolutionOrder.length; i++) {
+                                        var widgetKey = widgetResolutionOrder[i];
+                                        if(widgetKey in widgetState) {
+                                            var sprintStat = widgetState[widgetKey].getDisplay(null, sprintDisplayObject);
+                                            if (sprintStat.trim() != "" && widgetKey != "sprint") {
+                                                displayStr += "<br>" + sprintStat;
+                                            }
                                         }
                                     }
+                                    return displayStr;
                                 }
-                                return displayStr;
-                            }
-                            function updateSprintHistory(state){
-                                var sprintHistoryP = document.getElementById("sprint_history_p");
-                                sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
-                                var sprintHistoryButton = document.getElementById("sprint_display_sprint_history");
-                                sprintHistoryButton.innerHTML = state["sprint_display_heading"];
-                                if(state["sprint_display_type"] == "csv") {
-                                    sprintHistoryP.innerHTML += "<br>" + "<a href='data:text/plain;charset=utf-8," + escape(generateCSVFromJSONArray(state["sprint_history"], "\r\n")) +"' target=\"_blank\" download=\"sprintHistory.csv\">Download sprint history!!</a>";
-                                    sprintHistoryP.innerHTML += "<br>" + generateCSVFromJSONArray(state["sprint_history"], "<br>");
-                                    return;
-                                }
-                                var sprintDisplayMin = 0;
-                                var sprintDisplayMax = state["sprint_history"].length;
-                                if(state["sprint_display_type"] == "single" && sprintDisplayMax > 1) {
-                                    sprintDisplayMin = sprintDisplayMax - 1;
-                                }
-                                for(var i=sprintDisplayMin; i<sprintDisplayMax; i++) {
-                                    sprintHistoryP.innerHTML += "<br>" + getDisplayForSprintHistoryObject(state["sprint_history"][i]);
-                                }
-                            }
-                            function cycleSprintHistory() {
-                                var sprintHistoryP = document.getElementById("sprint_history_p");
-                                var sprintDisplaySize = globalState["sprint_display_type"];
-                                switch(globalState["sprint_display_type"]) {
-                                    case "none":
-                                        sprintDisplaySize = "all";
-                                        globalState["sprint_display_heading"] = "Show (None/<b>All</b>/Last/CSV) Sprint";
-                                        break;
-                                    case "all":
-                                        sprintDisplaySize = "single";
-                                        globalState["sprint_display_heading"] = "Show (None/All/<b>Last</b>/CSV) Sprint";
-                                        break;
-                                    case "single":
-                                        sprintDisplaySize = "csv";
-                                        globalState["sprint_display_heading"] = "Show (None/All/Last/<b>CSV</b>) Sprint";
-                                        break;
-                                    case "csv":
-                                        sprintDisplaySize = "none";
-                                        globalState["sprint_display_heading"] = "Show (<b>None</b>/All/Last/CSV) Sprint";
-                                        break;
-                                    default:
-                                        sprintDisplaySize = "none";
-                                        globalState["sprint_display_heading"] = "Show (<b>None</b>/All/Last/CSV) Sprint";
-                                        break;
-                                }
-                                globalState["sprint_display_type"] = sprintDisplaySize;
-                                updateSprintHistory(globalState);
-
-                                if(globalState["sprint_display_type"] == "none") {
-                                    sprintHistoryP.style.display = "none";
-                                } else {
-                                    sprintHistoryP.style.display = "block";
-                                }
-                            }
-                            var toggleSprintHistoryButton = document.createElement("BUTTON");
-                            toggleSprintHistoryButton.id = "sprint_display_sprint_history";
-                            toggleSprintHistoryButton.onclick = cycleSprintHistory;
-                            toggleSprintHistoryButton.innerHTML = "Show (None/All/<b>Last</b>/CSV) Sprint";
-
-                            var sprintTag = document.createElement("input");
-                            sprintTag.id = "sprint_name";
-                            sprintTag.placeholder = "insert your sprint name";
-                            sprintTag.defaultValue = "";
-
-                            var sprintControls = document.createElement("p");
-                            sprintControls.appendChild(document.createTextNode("Minutes in sprint: "));
-                            sprintControls.appendChild(sprint);
-                            sprintControls.appendChild(document.createTextNode(" "));
-                            sprintControls.appendChild(sprintResetButton);
-                            sprintControls.appendChild(document.createElement("br"));
-                            sprintControls.appendChild(toggleSprintHistoryButton);
-                            sprintControls.appendChild(document.createTextNode(" "));
-                            sprintControls.appendChild(sprintTag);
-
-                            element.appendChild(heading);
-                            element.appendChild(sprintP);
-                            element.appendChild(sprintControls);
-                            element.appendChild(sprintHistoryP);
-
-                            function getNewState(oldState) {
-                                var newState = {};
-                                newState["sprint_start_time"] = oldState["sprint_start_time"];
-                                newState["sprint_duration"] = oldState["sprint_duration"];
-                                newState["sprint_history"] = oldState["sprint_history"];
-                                newState["sprint_display_type"] = oldState["sprint_display_type"];
-                                newState["sprint_display_heading"] = oldState["sprint_display_heading"];
-                                if(oldState["sprint_start_time"] > 0) {
-                                    if(oldState["sprint_duration"] + oldState["sprint_start_time"] <= getTime()) {
-                                        newState["sprint_start_time"] = -1;
+                                function updateSprintHistory(state){
+                                    var sprintHistoryP = document.getElementById("sprint_history_p");
+                                    sprintHistoryP.innerHTML = "<i>Sprint history</i>:";
+                                    var sprintHistoryButton = document.getElementById("sprint_display_sprint_history");
+                                    sprintHistoryButton.innerHTML = state["sprint_display_heading"];
+                                    if(state["sprint_display_type"] == "csv") {
+                                        sprintHistoryP.innerHTML += "<br>" + "<a href='data:text/plain;charset=utf-8," + escape(generateCSVFromJSONArray(state["sprint_history"], "\r\n")) +"' target=\"_blank\" download=\"sprintHistory.csv\">Download sprint history!!</a>";
+                                        sprintHistoryP.innerHTML += "<br>" + generateCSVFromJSONArray(state["sprint_history"], "<br>");
+                                        return;
+                                    }
+                                    var sprintDisplayMin = 0;
+                                    var sprintDisplayMax = state["sprint_history"].length;
+                                    if(state["sprint_display_type"] == "single" && sprintDisplayMax > 1) {
+                                        sprintDisplayMin = sprintDisplayMax - 1;
+                                    }
+                                    for(var i=sprintDisplayMin; i<sprintDisplayMax; i++) {
+                                        sprintHistoryP.innerHTML += "<br>" + getDisplayForSprintHistoryObject(state["sprint_history"][i]);
                                     }
                                 }
-                                return newState;
-                            }
+                                function cycleSprintHistory() {
+                                    var sprintHistoryP = document.getElementById("sprint_history_p");
+                                    var sprintDisplaySize = globalState["sprint_display_type"];
+                                    switch(globalState["sprint_display_type"]) {
+                                        case "none":
+                                            sprintDisplaySize = "all";
+                                            globalState["sprint_display_heading"] = "Show (None/<b>All</b>/Last/CSV) Sprint";
+                                            break;
+                                        case "all":
+                                            sprintDisplaySize = "single";
+                                            globalState["sprint_display_heading"] = "Show (None/All/<b>Last</b>/CSV) Sprint";
+                                            break;
+                                        case "single":
+                                            sprintDisplaySize = "csv";
+                                            globalState["sprint_display_heading"] = "Show (None/All/Last/<b>CSV</b>) Sprint";
+                                            break;
+                                        case "csv":
+                                            sprintDisplaySize = "none";
+                                            globalState["sprint_display_heading"] = "Show (<b>None</b>/All/Last/CSV) Sprint";
+                                            break;
+                                        default:
+                                            sprintDisplaySize = "none";
+                                            globalState["sprint_display_heading"] = "Show (<b>None</b>/All/Last/CSV) Sprint";
+                                            break;
+                                    }
+                                    globalState["sprint_display_type"] = sprintDisplaySize;
+                                    updateSprintHistory(globalState);
 
-                            widgetStateUpdate[widgetType] = {
-                                getStartTags: function(){return {};},
-                                getNewState: getNewState,
-                                getDisplayData: function(state) {return {};},
-                                getDisplay: getDisplay,
-                                performUpdate: function(state) {
-                                    var stateUpdate = getNewState(state);
-                                    document.getElementById("sprint_p").innerHTML = getDisplay(stateUpdate);
-                                    if(stateUpdate["sprint_start_time"] < 0 && (state["sprint_start_time"] >= 0)) {
-                                            var sprintDisplayObject = {
-                                                title: document.getElementById("sprint_name").value.trim(),
-                                                end_time: getPrettyTime(getTime()),
-                                                duration: stateUpdate["sprint_duration"]/60
-                                            }
-                                            for (var i=0; i<widgetResolutionOrder.length; i++) {
-                                                var widgetKey = widgetResolutionOrder[i];
-                                                if(widgetKey in widgetState) {
-                                                    var taggedState = mergeObjects(state, state["sprint_start_tags"][widgetKey]);
-                                                    sprintDisplayObject = mergeObjects(sprintDisplayObject, widgetState[widgetKey].getDisplayData(taggedState));
+                                    if(globalState["sprint_display_type"] == "none") {
+                                        sprintHistoryP.style.display = "none";
+                                    } else {
+                                        sprintHistoryP.style.display = "block";
+                                    }
+                                }
+                                var toggleSprintHistoryButton = document.createElement("BUTTON");
+                                toggleSprintHistoryButton.id = "sprint_display_sprint_history";
+                                toggleSprintHistoryButton.onclick = cycleSprintHistory;
+                                toggleSprintHistoryButton.innerHTML = "Show (None/All/<b>Last</b>/CSV) Sprint";
+
+                                var sprintTag = document.createElement("input");
+                                sprintTag.id = "sprint_name";
+                                sprintTag.placeholder = "insert your sprint name";
+                                sprintTag.defaultValue = "";
+
+                                var sprintControls = document.createElement("p");
+                                sprintControls.appendChild(document.createTextNode("Minutes in sprint: "));
+                                sprintControls.appendChild(sprint);
+                                sprintControls.appendChild(document.createTextNode(" "));
+                                sprintControls.appendChild(sprintResetButton);
+                                sprintControls.appendChild(document.createElement("br"));
+                                sprintControls.appendChild(toggleSprintHistoryButton);
+                                sprintControls.appendChild(document.createTextNode(" "));
+                                sprintControls.appendChild(sprintTag);
+
+                                element.appendChild(heading);
+                                element.appendChild(sprintP);
+                                element.appendChild(sprintControls);
+                                element.appendChild(sprintHistoryP);
+
+                                function getNewState(oldState) {
+                                    var newState = {};
+                                    newState["sprint_start_time"] = oldState["sprint_start_time"];
+                                    newState["sprint_duration"] = oldState["sprint_duration"];
+                                    newState["sprint_history"] = oldState["sprint_history"];
+                                    newState["sprint_display_type"] = oldState["sprint_display_type"];
+                                    newState["sprint_display_heading"] = oldState["sprint_display_heading"];
+                                    if(oldState["sprint_start_time"] > 0) {
+                                        if(oldState["sprint_duration"] + oldState["sprint_start_time"] <= getTime()) {
+                                            newState["sprint_start_time"] = -1;
+                                        }
+                                    }
+                                    return newState;
+                                }
+
+                                widgetStateUpdate[widgetType] = {
+                                    getStartTags: function(){return {};},
+                                    getNewState: getNewState,
+                                    getDisplayData: function(state) {return {};},
+                                    getDisplay: getDisplay,
+                                    performUpdate: function(state) {
+                                        var stateUpdate = getNewState(state);
+                                        document.getElementById("sprint_p").innerHTML = getDisplay(stateUpdate);
+                                        if(stateUpdate["sprint_start_time"] < 0 && (state["sprint_start_time"] >= 0)) {
+                                                var sprintDisplayObject = {
+                                                    title: document.getElementById("sprint_name").value.trim(),
+                                                    end_time: getPrettyTime(getTime()),
+                                                    duration: stateUpdate["sprint_duration"]/60
                                                 }
-                                            }
-                                            if(stateUpdate["sprint_history"].length > 15) {
-                                                stateUpdate["sprint_history"].shift();
-                                            }
-                                            stateUpdate["sprint_history"].push(sprintDisplayObject);
-                                            updateSprintHistory(stateUpdate);
-                                            saveState();
-                                            alert("Times up!");
+                                                for (var i=0; i<widgetResolutionOrder.length; i++) {
+                                                    var widgetKey = widgetResolutionOrder[i];
+                                                    if(widgetKey in widgetState) {
+                                                        var taggedState = mergeObjects(state, state["sprint_start_tags"][widgetKey]);
+                                                        sprintDisplayObject = mergeObjects(sprintDisplayObject, widgetState[widgetKey].getDisplayData(taggedState));
+                                                    }
+                                                }
+                                                if(stateUpdate["sprint_history"].length > 15) {
+                                                    stateUpdate["sprint_history"].shift();
+                                                }
+                                                stateUpdate["sprint_history"].push(sprintDisplayObject);
+                                                updateSprintHistory(stateUpdate);
+                                                saveState();
+                                                alert("Times up!");
+                                        }
+                                        return stateUpdate;
                                     }
-                                    return stateUpdate;
-                                }
-                            };
+                                };
+                            }
+                            break;
+                        case "save":
+                            var saveP = document.getElementById("save_p");
+                            if(saveP == null) {
+                                var saveP = document.createElement("p");
+                                saveP.id = "save_p";
+
+                                var saveButton = document.createElement("BUTTON");
+                                saveButton.id = "save_button";
+                                saveButton.onclick = saveState;
+                                saveButton.innerHTML = "Save?";
+
+                                var downloadButton = document.createElement("BUTTON");
+                                downloadButton.onclick = toDownloadPage;
+                                downloadButton.innerHTML = "Download what I wrote?";
+
+                                saveP.appendChild(saveButton)
+                                saveP.appendChild(document.createTextNode(" to browser ("));
+                                var italics = document.createElement("i");
+                                italics.innerHTML = "ctrl-s";
+                                saveP.appendChild(italics);
+                                saveP.appendChild(document.createTextNode(")"));
+                                saveP.appendChild(document.createElement("br"));
+                                saveP.appendChild(downloadButton);
+
+                                element.appendChild(saveP);
+
+                                widgetStateUpdate[widgetType] = {
+                                    getStartTags: function(state) {return {};},
+                                    getNewState: function(state) {return {};},
+                                    getDisplayData: function(state) {return {};},
+                                    getDisplay: function(state) {return "";},
+                                    performUpdate: function(state) {
+                                        return {};
+                                    }
+                                };
+                            }
+                            break;
+                        default: //unknown widget:
+                            element = null;
+                    }
+
+                    return [widgetStateUpdate, element];
+                }
+                function generateWai() {
+                    return (Math.random() + 1).toString(36).substring(2,20);
+                }
+                function getWai() {
+                    var waiJSON = getApi(getProjectName(), ["who_am_i"]);
+                    var wai = "";
+                    if(Object.keys(waiJSON).length != 0 && waiJSON["who_am_i"] != null){
+                        wai = waiJSON["who_am_i"];
+                    } else {
+                        wai = generateWai();
+                        setApi(getProjectName(), {"who_am_i": wai});
+                    }
+                    return wai;
+                }
+                function verifyWai(url) {
+                    return getParameterByName("wai", url) == getWai();
+                }
+                function replaceWai(url) {
+                    return replaceParam("wai", getWai(), url);
+                }
+                function getDefaultParams(useUserDefinedDefault) {
+                    var defaultLayout = "?C=tunnel,save,sprint,stats";
+                    if(useUserDefinedDefault) {
+                        var userDefinedLayout = getApi(getProjectName(), ["layout"]);
+                        if(userDefinedLayout["layout"] != null) {
+                            defaultLayout = userDefinedLayout["layout"];
                         }
-                        break;
-                    case "save":
-                        var saveP = document.getElementById("save_p");
-                        if(saveP == null) {
-                            var saveP = document.createElement("p");
-                            saveP.id = "save_p";
+                    }
+                    return defaultLayout
+                }
+                //copy pasted from a blog entry about Fisher-Yates Shuffle
+                function shuffle(array) {
+                    var m = array.length, t, i;
 
-                            var saveButton = document.createElement("BUTTON");
-                            saveButton.id = "save_button";
-                            saveButton.onclick = saveState;
-                            saveButton.innerHTML = "Save?";
+                    // While there remain elements to shuffle…
+                    while (m) {
 
-                            var downloadButton = document.createElement("BUTTON");
-                            downloadButton.onclick = toDownloadPage;
-                            downloadButton.innerHTML = "Download what I wrote?";
+                        // Pick a remaining element…
+                        i = Math.floor(Math.random() * m--);
 
-                            saveP.appendChild(saveButton)
-                            saveP.appendChild(document.createTextNode(" to browser ("));
-                            var italics = document.createElement("i");
-                            italics.innerHTML = "ctrl-s";
-                            saveP.appendChild(italics);
-                            saveP.appendChild(document.createTextNode(")"));
-                            saveP.appendChild(document.createElement("br"));
-                            saveP.appendChild(downloadButton);
-                            
-                            element.appendChild(saveP);
+                        // And swap it with the current element.
+                        t = array[m];
+                        array[m] = array[i];
+                        array[i] = t;
+                    }
 
-                            widgetStateUpdate[widgetType] = {
-                                getStartTags: function(state) {return {};},
-                                getNewState: function(state) {return {};},
-                                getDisplayData: function(state) {return {};},
-                                getDisplay: function(state) {return "";},
-                                performUpdate: function(state) {
-                                    return {};
-                                }
-                            };
+                    return array;
+                }
+                function randInt(min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+                function getRandomParams() {
+                    var widgetOrder = shuffle(JSON.parse(JSON.stringify(widgetResolutionOrder)));
+                    var rPos  = randInt(0, widgetOrder.length);
+                    var rWidgets = widgetOrder.slice(rPos);
+                    var lWidgets = widgetOrder.slice(0, rPos);
+                    var paramStr = "?";
+                    if(lWidgets.length > 0){
+                        paramStr += "L=" + lWidgets.join(",");
+                        if(rWidgets.length > 0) {
+                            paramStr += "&";
                         }
-                        break;
-                    default: //unknown widget:
-                        element = null;
+                    }
+                    if(rWidgets.length > 0){
+                        paramStr += "R=" + rWidgets.join(",");
+                    }
+                    return paramStr
                 }
-
-                return [widgetStateUpdate, element];
-            }
-            function generateWai() {
-                return (Math.random() + 1).toString(36).substring(2,20);
-            }
-            function getWai() {
-                var waiJSON = getApi(getProjectName(), ["who_am_i"]);
-                var wai = "";
-                if(Object.keys(waiJSON).length != 0 && waiJSON["who_am_i"] != null){
-                    wai = waiJSON["who_am_i"];
-                } else {
-                    wai = generateWai();
-                    setApi(getProjectName(), {"who_am_i": wai});
-                }
-                return wai;
-            }
-            function verifyWai(url) {
-                return getParameterByName("wai", url) == getWai();
-            }
-            function replaceWai(url) {
-                return replaceParam("wai", getWai(), url);
-            }
-            function getDefaultParams(useUserDefinedDefault) {
-                var defaultLayout = "?C=tunnel,save,sprint,stats";
-                if(useUserDefinedDefault) {
-                    var userDefinedLayout = getApi(getProjectName(), ["layout"]);
-                    if(userDefinedLayout["layout"] != null) {
-                        defaultLayout = userDefinedLayout["layout"];
+                function toggleAbout() {
+                    var aboutText = document.getElementById("about_text");
+                    if(aboutText.style.display == "none") {
+                        aboutText.style.display ="block";
+                    } else {
+                        aboutText.style.display ="none";
                     }
                 }
-                return defaultLayout
-            }
-            //copy pasted from a blog entry about Fisher-Yates Shuffle
-            function shuffle(array) {
-                var m = array.length, t, i;
-
-                // While there remain elements to shuffle…
-                while (m) {
-
-                    // Pick a remaining element…
-                    i = Math.floor(Math.random() * m--);
-
-                    // And swap it with the current element.
-                    t = array[m];
-                    array[m] = array[i];
-                    array[i] = t;
-                }
-
-                return array;
-            }
-            function randInt(min, max) {
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
-            function getRandomParams() {
-                var widgetOrder = shuffle(JSON.parse(JSON.stringify(widgetResolutionOrder)));
-                var rPos  = randInt(0, widgetOrder.length);
-                var rWidgets = widgetOrder.slice(rPos);
-                var lWidgets = widgetOrder.slice(0, rPos);
-                var paramStr = "?";
-                if(lWidgets.length > 0){
-                    paramStr += "L=" + lWidgets.join(",");
-                    if(rWidgets.length > 0) {
-                        paramStr += "&";
+                function toggleLayouts() {
+                    var defaultLayouts = document.getElementById("default_layouts");
+                    if(defaultLayouts.innerHTML.trim() == "") {
+                        var defaultParams = replaceWai(getDefaultParams(false));
+                        var twoColsParams = replaceWai("?L=tunnel,save&R=sprint,stats");
+                        var justTunnelParams = replaceWai("?C=tunnel");
+                        var moreWidgetsParams = replaceWai("?L=tunnel,save&R=notes,sprint,stats");
+                        var randParams = replaceWai(getRandomParams());
+                        defaultLayouts.innerHTML = "Adjust url parameters to change layout:"
+                        defaultLayouts.innerHTML += "<br><b>One Column:</b> <a href=\"" + defaultParams +"\">" + defaultParams + "</a>"
+                        defaultLayouts.innerHTML += "<br><b>Two Columns:</b> <a href=\"" + twoColsParams +"\">" + twoColsParams + "</a>"
+                        defaultLayouts.innerHTML += "<br><b>No Frills:</b> <a href=\"" + justTunnelParams +"\">" + justTunnelParams + "</a>"
+                        defaultLayouts.innerHTML += "<br><b>More Widgets:</b> <a href=\"" + moreWidgetsParams +"\">" + moreWidgetsParams + "</a>"
+                        defaultLayouts.innerHTML += "<br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
                     }
-                }
-                if(rWidgets.length > 0){
-                    paramStr += "R=" + rWidgets.join(",");
-                }
-                return paramStr
-            }
-            function toggleAbout() {
-                var aboutText = document.getElementById("about_text");
-                if(aboutText.style.display == "none") {
-                    aboutText.style.display ="block";
-                } else {
-                    aboutText.style.display ="none";
-                }
-            }
-            function toggleLayouts() {
-                var defaultLayouts = document.getElementById("default_layouts");
-                if(defaultLayouts.innerHTML.trim() == "") {
-                    var defaultParams = replaceWai(getDefaultParams(false));
-                    var twoColsParams = replaceWai("?L=tunnel,save&R=sprint,stats");
-                    var justTunnelParams = replaceWai("?C=tunnel");
-                    var moreWidgetsParams = replaceWai("?L=tunnel,save&R=notes,sprint,stats");
-                    var randParams = replaceWai(getRandomParams());
-                    defaultLayouts.innerHTML = "Adjust url parameters to change layout:"
-                    defaultLayouts.innerHTML += "<br><b>One Column:</b> <a href=\"" + defaultParams +"\">" + defaultParams + "</a>"
-                    defaultLayouts.innerHTML += "<br><b>Two Columns:</b> <a href=\"" + twoColsParams +"\">" + twoColsParams + "</a>"
-                    defaultLayouts.innerHTML += "<br><b>No Frills:</b> <a href=\"" + justTunnelParams +"\">" + justTunnelParams + "</a>"
-                    defaultLayouts.innerHTML += "<br><b>More Widgets:</b> <a href=\"" + moreWidgetsParams +"\">" + moreWidgetsParams + "</a>"
-                    defaultLayouts.innerHTML += "<br><b>Random:</b> <a href=\"" + randParams +"\">" + randParams + "</a>";
-                }
-                if(defaultLayouts.style.display == "none") {
-                    urlLayouts = document.getElementsByClassName("url_layouts")
-                    for(var i=0; i<urlLayouts.length;i++){
-                        urlLayouts[i].style.display = "block";
-                    }
-                } else {
-                    urlLayouts = document.getElementsByClassName("url_layouts")
-                    for(var i=0; i<urlLayouts.length;i++){
-                        urlLayouts[i].style.display = "none";
-                    }
-                }
-            }
-            function setupDivsFromURL() {
-                var widgetState = {};
-                var url = window.location.href;
-
-                //redirect if no params are given:
-                if(!window.location.search.length) {
-                    //default to :
-                    url += replaceWai(getDefaultParams(true));
-                    window.location.replace(url);
-                }
-                if(!verifyWai(url)) {
-                    url = url.substring(0, url.length - window.location.search.length) + replaceWai(window.location.search);
-                    window.location.replace(url);
-                }
-
-                var mandatoryWidgets = {};
-                for(var i=0; i<widgetResolutionOrder.length; i++) {
-                    mandatoryWidgets[widgetResolutionOrder[i]] = "";
-                }
-                //Check for location parameters:
-                var divLocs = ["C", "L", "R"];
-                function initializeDiv(paramKey, value) {
-                    var retArr = createWidgetDiv(value);
-                    var widgetStateUpdate = retArr[0];
-                    var div = retArr[1];
-                    if(div == null || div == undefined){
-                        return 
-                    }
-                    for(var key in widgetStateUpdate) {
-                        widgetState[key] = widgetStateUpdate[key];
-                    }
-                    //try to create DIV if the widget creation was successful:
-                    switch(paramKey) {
-                        case "C":
-                            document.getElementById("center_divs").appendChild(div);
-                            break;
-                        case "R":
-                            document.getElementById("right_divs").appendChild(div);
-                            break;
-                        case "L":
-                            document.getElementById("left_divs").appendChild(div);
-                            break;
-                        default: //unknown location
-                            //hide the div but do the calculation anyway.
-                            div.style.display = "none";
-                            document.getElementById("center_divs").appendChild(div);
-                            break;
-                    }
-                }
-                for(var i = 0; i < divLocs.length; i++) {
-                    var paramKey = divLocs[i];
-                    var valuesString = getParameterByName(paramKey, url);
-                    var values = [];
-                    if(valuesString) {
-                        values = valuesString.split(",");
-                    }
-                    //Not protected as divLocs ought to be legal
-                    document.getElementById(paramKey).innerHTML = "<b>" + paramKey + " = " + valuesString + "</b>";
-                    for(var j=0;j<values.length;j++) {
-                        var value = values[j];
-                        delete mandatoryWidgets[value];
-                        initializeDiv(paramKey, value);
-                    }
-                }
-                for(var manKey in mandatoryWidgets){
-                    initializeDiv(null, manKey);
-                }
-                return widgetState;
-            }
-            function updateState() {
-                for (var i=0; i<widgetResolutionOrder.length; i++) {
-                    var key = widgetResolutionOrder[i];
-                    if(key in widgetState) {
-                        var stateUpdate = widgetState[key].performUpdate(globalState);
-                        for (var updateKey in stateUpdate) {
-                            globalState[updateKey] = stateUpdate[updateKey];
+                    if(defaultLayouts.style.display == "none") {
+                        urlLayouts = document.getElementsByClassName("url_layouts")
+                        for(var i=0; i<urlLayouts.length;i++){
+                            urlLayouts[i].style.display = "block";
+                        }
+                    } else {
+                        urlLayouts = document.getElementsByClassName("url_layouts")
+                        for(var i=0; i<urlLayouts.length;i++){
+                            urlLayouts[i].style.display = "none";
                         }
                     }
                 }
-                if (document.getElementById("auto_save").checked && (getTime() - globalState["last_saved_time"] > 60)) {
+                function setupDivsFromURL() {
+                    var widgetState = {};
+                    var url = window.location.href;
+
+                    //redirect if no params are given:
+                    if(!window.location.search.length) {
+                        //default to :
+                        url += replaceWai(getDefaultParams(true));
+                        window.location.replace(url);
+                    }
+                    if(!verifyWai(url)) {
+                        url = url.substring(0, url.length - window.location.search.length) + replaceWai(window.location.search);
+                        window.location.replace(url);
+                    }
+
+                    var mandatoryWidgets = {};
+                    for(var i=0; i<widgetResolutionOrder.length; i++) {
+                        mandatoryWidgets[widgetResolutionOrder[i]] = "";
+                    }
+                    //Check for location parameters:
+                    var divLocs = ["C", "L", "R"];
+                    function initializeDiv(paramKey, value) {
+                        var retArr = createWidgetDiv(value);
+                        var widgetStateUpdate = retArr[0];
+                        var div = retArr[1];
+                        if(div == null || div == undefined){
+                            return
+                        }
+                        for(var key in widgetStateUpdate) {
+                            widgetState[key] = widgetStateUpdate[key];
+                        }
+                        //try to create DIV if the widget creation was successful:
+                        switch(paramKey) {
+                            case "C":
+                                document.getElementById("center_divs").appendChild(div);
+                                break;
+                            case "R":
+                                document.getElementById("right_divs").appendChild(div);
+                                break;
+                            case "L":
+                                document.getElementById("left_divs").appendChild(div);
+                                break;
+                            default: //unknown location
+                                //hide the div but do the calculation anyway.
+                                div.style.display = "none";
+                                document.getElementById("center_divs").appendChild(div);
+                                break;
+                        }
+                    }
+                    for(var i = 0; i < divLocs.length; i++) {
+                        var paramKey = divLocs[i];
+                        var valuesString = getParameterByName(paramKey, url);
+                        var values = [];
+                        if(valuesString) {
+                            values = valuesString.split(",");
+                        }
+                        //Not protected as divLocs ought to be legal
+                        document.getElementById(paramKey).innerHTML = "<b>" + paramKey + " = " + valuesString + "</b>";
+                        for(var j=0;j<values.length;j++) {
+                            var value = values[j];
+                            delete mandatoryWidgets[value];
+                            initializeDiv(paramKey, value);
+                        }
+                    }
+                    for(var manKey in mandatoryWidgets){
+                        initializeDiv(null, manKey);
+                    }
+                    return widgetState;
+                }
+                function updateState() {
+                    for (var i=0; i<widgetResolutionOrder.length; i++) {
+                        var key = widgetResolutionOrder[i];
+                        if(key in widgetState) {
+                            var stateUpdate = widgetState[key].performUpdate(globalState);
+                            for (var updateKey in stateUpdate) {
+                                globalState[updateKey] = stateUpdate[updateKey];
+                            }
+                        }
+                    }
+                    if (document.getElementById("auto_save").checked && (getTime() - globalState["last_saved_time"] > 60)) {
+                        saveState();
+                    }
+                }
+                function toDownloadPage() {
+                    updateState();
                     saveState();
+                    var totalText = globalState["hidden_text"] + document.getElementById("text_box").value;
+                    var newWindow = window.open("");
+                    newWindow.document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(totalText) +"' target=\"_blank\" download=\"tv.txt\">Download text!!</a><br><a href='data:text/plain;charset=utf-8," + escape(generateCSVFromJSONArray(globalState["sprint_history"], "\r\n")) +"' target=\"_blank\" download=\"sprintHistory.csv\">Download sprint history!!</a><p style=\"white-space:pre-wrap;\">" + totalText + "</p></body></html>");
+                    newWindow.document.close();
                 }
-            }
-            function toDownloadPage() {
-                updateState();
-                saveState();
-                var totalText = globalState["hidden_text"] + document.getElementById("text_box").value;
-                var newWindow = window.open("");
-                newWindow.document.write("<html><body><a href='data:text/plain;charset=utf-8," + escape(totalText) +"' target=\"_blank\" download=\"tv.txt\">Download text!!</a><br><a href='data:text/plain;charset=utf-8," + escape(generateCSVFromJSONArray(globalState["sprint_history"], "\r\n")) +"' target=\"_blank\" download=\"sprintHistory.csv\">Download sprint history!!</a><p style=\"white-space:pre-wrap;\">" + totalText + "</p></body></html>");
-                newWindow.document.close();
-            }
-            //This is questionable... seems fragile:
-            var widgetResolutionOrder = ["tunnel", "stats", "wpm", "notes", "sprint", "save"];
-            var globalState = {
-                hidden_text: "",
-                hidden_word_count: 0,
-                word_count: 0,
-                char_count: 0,
-                last_saved_time: getTime()
-            }
-            var widgetState = setupDivsFromURL();
-
-            var pollFreq = 5000;
-            var refreshIntervalId = setInterval("updateState()", pollFreq);
-            document.onkeypress = function(evt) {
-                evt = evt || window.event;
-                var charCode = evt.keyCode || evt.which;
-                var charStr = String.fromCharCode(charCode);
-                if(evt.ctrlKey && charStr == "s") {
-                    saveState();
-                    evt.preventDefault();
+                //This is questionable... seems fragile:
+                var widgetResolutionOrder = ["tunnel", "stats", "wpm", "notes", "sprint", "save"];
+                var globalState = {
+                    hidden_text: "",
+                    hidden_word_count: 0,
+                    word_count: 0,
+                    char_count: 0,
+                    last_saved_time: getTime()
                 }
-            }
-        </script>
+                var widgetState = setupDivsFromURL();
 
+                var pollFreq = 5000;
+                var refreshIntervalId = setInterval("updateState()", pollFreq);
+                document.onkeypress = function(evt) {
+                    evt = evt || window.event;
+                    var charCode = evt.keyCode || evt.which;
+                    var charStr = String.fromCharCode(charCode);
+                    if(evt.ctrlKey && charStr == "s") {
+                        saveState();
+                        evt.preventDefault();
+                    }
+                }
+            </script>
+    </div>
     </body>
 </html>
