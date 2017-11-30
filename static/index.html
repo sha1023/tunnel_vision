@@ -2,80 +2,82 @@
 <html>
     <meta charset="utf-8">
     <style>
+    #main {
+        overflow-x: hidden;
+        transition: 0.5s;
+    }
     .sidenav {
-    height: 100%;
-    width: 124px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #DCDCDC;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-}
+        height: 100%;
+        width: 124px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #DCDCDC;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+    }
 
-.sidenav a {
-    padding: 8px 8px 8px 15px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #000000;
-    display: block;
-    transition: 0.3s;
-}
+    .sidenav a {
+        padding: 8px 8px 8px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #000000;
+        display: block;
+        transition: 0.3s;
+    }
 
-.sidenav a:hover {
-color: #f1f1f1;
-}
+    .sidenav a:hover {
+        color: #f1f1f1;
+    }
 
-.sidenav .closebtn {
-    position: absolute;
-    top: 0;
-    right: 15px;
-    font-size: 36px;
-    margin-left: 50px;
-}
+    .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 15px;
+        font-size: 36px;
+        margin-left: 50px;
+    }
 
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
-}
-</style>
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
+    </style>
     <head>
         <title>Tunnel Vision</title>
     </head>
     <body>
 
-<div id="mySidenav" class="sidenav">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <a onClick="toggleAbout()" style="cursor:pointer">Instructions</a>
-    <a onClick="toggleLayouts()" style="cursor:pointer">Layout</a>
-    <a onClick="toDownloadPage()"  style="cursor:pointer">Download</a>
-    <a onClick="saveState()" style="cursor:pointer">Save</a>
-    <a onClick="loadSavedState()" style="cursor:pointer">Reload</a>
-</div>
+        <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a onClick="toggleAbout()" style="cursor:pointer">Instructions</a>
+            <a onClick="toggleLayouts()" style="cursor:pointer">Layout</a>
+            <a onClick="toDownloadPage()"  style="cursor:pointer">Download</a>
+            <a onClick="saveState()" style="cursor:pointer">Save</a>
+            <a onClick="loadSavedState()" style="cursor:pointer">Reload</a>
+        </div>
 
-<script>
-/* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
-function openNav() {
-    document.getElementById("mySidenav").style.width = "124px";
-    document.getElementById("main").style.marginLeft = "124px";
-}
+    <script>
+    /* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "124px";
+        document.getElementById("main").style.marginLeft = "124px";
+    }
 
-/* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
-function closeNav() {
-    document.getElementById("mySidenav").style.width = "0";
-    document.getElementById("main").style.marginLeft = "0";
-}
-</script>
-    <hr>
+    /* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+    }
+    </script>
     <span style="font-size:30px;cursor:pointer;float:left;" onclick="openNav()">&#9776; menu</span>
 
     <p style="text-align:center;"><i>I do not like work even when someone else does it.</i> -- Mark Twain</p>
-    <hr>
-    <hr>
-    <div id="main" style="margin-left:120px">
-
+    <div id="main" style="margin-left:120px;clear:both" >
+            <hr>
+            <hr>
             <div>
             <p style="float:left"><button onclick="toDownloadPage()">Download what I wrote.</button></p>
             <p style="float:right">
