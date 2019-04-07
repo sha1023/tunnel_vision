@@ -7,9 +7,9 @@ This is meant to provide such an interface. In theory it's meant to be portable 
 
 ## Installation/Use
 
-Just put the tunnel_vision.html on your desktop and open it with your favorite browser. Probably double clicking it should work.
+Currently this is hosted in two locations: https://sha1023.github.io/tunnel_vision/ and http://sha-tunnel-vision.appspot.com. Simply follow the links.
 
-Use ought to be self explanatory. You can resize the window with the mouse and set the amount of text you can see via the memory length input. Clicking the "What did I write?" button displays what you wrote. You have to copy and paste it into a file to save it if you click back, you lose your work. (Sorry guys, might improve this later.)
+Use ought to be self explanatory. You can resize the window with the mouse and set whether what you've written is hidden from you or not by clicking the enable scroll button limit check box.  Clicking the "What did I write?" button displays what you wrote. You have to copy and paste it into a file to save it. If you leave the website, you may lose your work. (Sorry guys, might improve this later.)
 
 ## WARNING
 
