@@ -514,7 +514,16 @@
                                 }
                                 function resetSprintStartTime() {
                                     var sprintP = document.getElementById("sprint_p");
-                                    globalState["sprint_start_time"] = getTime();
+                                    if(globalState["sprint_start_time"] == -1) {
+                                        globalState["sprint_start_time"] = getTime();
+                                        document.getElementById("sprint_reset_button").innerHTML = "Stop Sprint"
+                                    }
+                                    else {
+                                        globalState["sprint_start_time"] = -1
+                                        globalState["abort_sprint"] = true
+                                        document.getElementById("sprint_reset_button").innerHTML = "Start Sprint"
+                                        return
+                                    }
                                     globalState["sprint_duration"] = document.getElementById("sprint_time").value*60;
                                     globalState["sprint_start_tags"] = {};
                                     for(var widgetKey in widgetState) {
@@ -641,7 +650,9 @@
                                     performUpdate: function(state) {
                                         var stateUpdate = getNewState(state);
                                         document.getElementById("sprint_p").innerHTML = getDisplay(stateUpdate);
-                                        if(stateUpdate["sprint_start_time"] < 0 && (state["sprint_start_time"] >= 0)) {
+                                        var abortSprint = state["abort_sprint"]
+                                        if(abortSprint || (stateUpdate["sprint_start_time"] < 0 && (state["sprint_start_time"] >= 0))) {
+                                                stateUpdate["abort_sprint"] = false
                                                 var sprintDisplayObject = {
                                                     title: document.getElementById("sprint_name").value.trim(),
                                                     end_time: getPrettyTime(getTime()),
@@ -660,7 +671,9 @@
                                                 stateUpdate["sprint_history"].push(sprintDisplayObject);
                                                 updateSprintHistory(stateUpdate);
                                                 saveState();
-                                                alert("Times up!");
+                                                if(! abortSprint) {
+                                                    alert("Times up!");
+                                                }
                                         }
                                         return stateUpdate;
                                     }
