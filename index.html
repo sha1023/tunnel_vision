@@ -519,7 +519,6 @@
                                         document.getElementById("sprint_reset_button").innerHTML = "Stop Sprint"
                                     }
                                     else {
-                                        globalState["sprint_start_time"] = -1
                                         globalState["abort_sprint"] = true
                                         document.getElementById("sprint_reset_button").innerHTML = "Start Sprint"
                                         return
@@ -537,7 +536,7 @@
                                 sprintResetButton.innerHTML = "Start Sprint";
 
                                 function getDisplayForSprintHistoryObject(sprintDisplayObject){
-                                    var displayStr = "<br><i>-- " + sprintDisplayObject.title + " --</i><br>" + sprintDisplayObject.end_time + " - " + sprintDisplayObject.duration + " minutes:";
+                                    var displayStr = "<br><i>-- " + sprintDisplayObject.title + " --</i><br>" + sprintDisplayObject.start_time + " - " + sprintDisplayObject.duration + " minutes planned (actual duration " + sprintDisplayObject.actual_duration_seconds + " seconds):";
                                     for (var i=0; i<widgetResolutionOrder.length; i++) {
                                         var widgetKey = widgetResolutionOrder[i];
                                         if(widgetKey in widgetState) {
@@ -629,7 +628,12 @@
 
                                 function getNewState(oldState) {
                                     var newState = {};
-                                    newState["sprint_start_time"] = oldState["sprint_start_time"];
+                                    if(oldState["abort_sprint"]) {
+                                        newState["sprint_start_time"] = -1;
+                                    }
+                                    else {
+                                        newState["sprint_start_time"] = oldState["sprint_start_time"];
+                                    }
                                     newState["sprint_duration"] = oldState["sprint_duration"];
                                     newState["sprint_history"] = oldState["sprint_history"];
                                     newState["sprint_display_type"] = oldState["sprint_display_type"];
@@ -653,10 +657,13 @@
                                         var abortSprint = state["abort_sprint"]
                                         if(abortSprint || (stateUpdate["sprint_start_time"] < 0 && (state["sprint_start_time"] >= 0))) {
                                                 stateUpdate["abort_sprint"] = false
+                                                document.getElementById("sprint_reset_button").innerHTML = "Start Sprint"
                                                 var sprintDisplayObject = {
                                                     title: document.getElementById("sprint_name").value.trim(),
+                                                    start_time: getPrettyTime(state["sprint_start_time"]),
                                                     end_time: getPrettyTime(getTime()),
-                                                    duration: stateUpdate["sprint_duration"]/60
+                                                    duration: stateUpdate["sprint_duration"]/60,
+                                                    actual_duration_seconds: Math.round(getTime() - state["sprint_start_time"])
                                                 }
                                                 for (var i=0; i<widgetResolutionOrder.length; i++) {
                                                     var widgetKey = widgetResolutionOrder[i];
