@@ -7,7 +7,7 @@ This is meant to provide such an interface. In theory it's meant to be portable 
 
 ## Installation/Use
 
-Currently this is hosted in two locations: https://sha1023.github.io/tunnel_vision/ and http://sha-tunnel-vision.appspot.com. Simply follow the links.
+Currently this is hosted here: https://sha1023.github.io/tunnel_vision/. Simply follow the link.
 
 Use ought to be self explanatory. You can resize the window with the mouse and set whether what you've written is hidden from you or not by clicking the enable scroll button limit check box.  Clicking the "What did I write?" button displays what you wrote. You have to copy and paste it into a file to save it. If you leave the website, you may lose your work. (Sorry guys, might improve this later.)
 
